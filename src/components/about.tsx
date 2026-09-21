@@ -186,7 +186,13 @@ export function About() {
       </motion.span>
 
       <div className="relative z-10 mx-auto max-w-[1500px] px-6 md:px-10">
-        <SectionHeading id="about" index="02" title="About" aside="Who is typing" />
+        <SectionHeading
+          id="about"
+          index="02"
+          title="About"
+          aside="Who is typing"
+          variant="serif"
+        />
 
         <div className="mt-16 grid gap-14 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.85fr)] lg:gap-20">
           {/* ---------- the statement ---------- */}

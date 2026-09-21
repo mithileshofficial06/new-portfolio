@@ -164,22 +164,49 @@ export function CountUp({
 }
 
 /**
- * Section header: a mono index, the title in thin display type, and a rule
- * that draws across the remaining width.
+ * Section headers.
+ *
+ * Every band used the same lockup — mono index, hairline, big uppercase
+ * display — so the page read as one long section no matter what the words
+ * said. Each variant below is a different piece of typography, and a section
+ * is recognisable from its header alone.
  */
+type HeadingVariant = "rule" | "serif" | "outline" | "split" | "center";
+
 export function SectionHeading({
   index,
   title,
   aside,
   id,
+  variant = "rule",
 }: {
   index: string;
   title: string;
   aside?: string;
   id?: string;
+  variant?: HeadingVariant;
 }) {
+  const body = {
+    rule: <RuleHeading index={index} title={title} aside={aside} />,
+    serif: <SerifHeading index={index} title={title} aside={aside} />,
+    outline: <OutlineHeading index={index} title={title} aside={aside} />,
+    split: <SplitHeading index={index} title={title} aside={aside} />,
+    center: <CenterHeading index={index} title={title} aside={aside} />,
+  }[variant];
+
   return (
     <div id={id} className="scroll-mt-28">
+      {body}
+    </div>
+  );
+}
+
+type Parts = { index: string; title: string; aside?: string };
+
+/** 01 — index, rule, aside, then the title beneath at full width. */
+function RuleHeading({ index, title, aside }: Parts) {
+  return (
+    <>
       <Reveal className="flex items-baseline gap-4">
         <span className="label shrink-0">{index}</span>
         <DrawLine className="translate-y-[-0.35em]" />
@@ -189,6 +216,117 @@ export function SectionHeading({
       <h2 className="text-chalk mt-6 text-[clamp(2rem,6vw,4.75rem)] leading-[0.95] font-light tracking-[-0.055em] uppercase">
         <RevealWords text={title} />
       </h2>
+    </>
+  );
+}
+
+/**
+ * 02 — the serif voice, set lower case and italic. The only header on the
+ * page that is neither grotesk nor uppercase.
+ */
+function SerifHeading({ index, title, aside }: Parts) {
+  return (
+    <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-10">
+      <Reveal className="flex shrink-0 items-center gap-3 pt-3">
+        <span className="border-line text-ash flex size-11 items-center justify-center rounded-full border font-mono text-[11px] tracking-[0.1em]">
+          {index}
+        </span>
+        {aside && <span className="label sm:hidden">{aside}</span>}
+      </Reveal>
+
+      <div className="min-w-0">
+        <h2 className="text-chalk font-serif text-[clamp(2.6rem,8vw,6.5rem)] leading-[0.92] tracking-[-0.02em] italic">
+          <RevealWords text={title} />
+        </h2>
+        {aside && (
+          <Reveal delay={0.15} y={14}>
+            <p className="label mt-4 hidden sm:block">{aside}</p>
+          </Reveal>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * 03 — outlined display type over a ghost numeral. Hovering fills the
+ * letters, so the header answers the pointer the way the tiles below it do.
+ */
+function OutlineHeading({ index, title, aside }: Parts) {
+  return (
+    <div className="group relative">
+      <span
+        aria-hidden
+        className="font-display text-line pointer-events-none absolute -top-6 -left-2 text-[clamp(7rem,18vw,15rem)] leading-none tracking-[-0.06em] opacity-40 select-none md:-top-12"
+      >
+        {index}
+      </span>
+
+      <div className="relative">
+        <h2 className="font-display text-[clamp(2.2rem,8.5vw,7rem)] leading-[0.9] tracking-[-0.055em] text-transparent uppercase transition-colors duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] [-webkit-text-stroke:1px_var(--color-ash)] group-hover:text-chalk">
+          <RevealWords text={title} />
+        </h2>
+        {aside && (
+          <Reveal delay={0.2} y={14} className="mt-6 flex items-center gap-4">
+            <span className="label shrink-0">{aside}</span>
+            <DrawLine delay={0.3} />
+          </Reveal>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** 04 — title left, a heavy numeral right, ruled above and below. */
+function SplitHeading({ index, title, aside }: Parts) {
+  return (
+    <div>
+      <DrawLine />
+      <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6 py-7 md:py-9">
+        <div className="min-w-0">
+          {aside && (
+            <Reveal y={12}>
+              <p className="label mb-4">{aside}</p>
+            </Reveal>
+          )}
+          <h2 className="text-chalk text-[clamp(1.9rem,5.2vw,4rem)] leading-[1] font-light tracking-[-0.045em]">
+            <RevealWords text={title} />
+          </h2>
+        </div>
+
+        <Reveal delay={0.12} y={18} className="shrink-0">
+          <span
+            aria-hidden
+            className="font-display text-ash/45 text-[clamp(3.5rem,9vw,7rem)] leading-[0.8] tabular-nums"
+          >
+            {index}
+          </span>
+        </Reveal>
+      </div>
+      <DrawLine delay={0.2} />
+    </div>
+  );
+}
+
+/** 05 — centred, with the index held between two rules that draw outward. */
+function CenterHeading({ index, title, aside }: Parts) {
+  return (
+    <div className="flex flex-col items-center text-center">
+      <Reveal className="flex w-full max-w-3xl items-center gap-5">
+        <DrawLine className="origin-right" />
+        <span className="label shrink-0">{index}</span>
+        <DrawLine />
+      </Reveal>
+
+      <h2 className="text-chalk mt-7 text-[clamp(2rem,6vw,4.75rem)] leading-[0.95] font-light tracking-[-0.055em] uppercase">
+        <RevealWords text={title} />
+      </h2>
+
+      {aside && (
+        <Reveal delay={0.18} y={14}>
+          <p className="label mt-5">{aside}</p>
+        </Reveal>
+      )}
     </div>
   );
 }

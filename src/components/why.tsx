@@ -132,6 +132,7 @@ export function Why() {
           index="05"
           title="Why choose me"
           aside="The short case"
+          variant="center"
         />
         <Panels />
         <Stacked />
