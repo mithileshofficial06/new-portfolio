@@ -37,6 +37,11 @@ const GLYPH: Record<TimelineKind, string> = {
     "M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7ZM5 10h14v10H5V10Zm2.5 2v2h2v-2h-2Zm4.5 0v2h2v-2h-2Z",
 };
 
+/** The whole record by kind, in the order the filters run. */
+const TALLY = (FILTERS.filter((f) => f !== "All") as TimelineKind[]).map(
+  (kind) => [kind, TIMELINE.filter((entry) => entry.kind === kind).length] as const,
+);
+
 function Card({
   entry,
   index,
@@ -68,18 +73,6 @@ function Card({
       transition={{ duration: 0.8, ease: EASE, delay: Math.min(index * 0.07, 0.35) }}
       className="group relative"
     >
-      {/* Node on the spine, lit once the card has arrived. */}
-      <span
-        aria-hidden
-        className={`absolute top-8 -left-8 z-10 size-2 -translate-x-1/2 rounded-full border transition-all duration-700 md:-left-12 ${
-          inView ? "border-chalk bg-chalk" : "border-ash bg-void"
-        } group-hover:shadow-[0_0_0_5px_rgba(250,250,250,0.08)]`}
-      />
-      <span
-        aria-hidden
-        className="bg-line group-hover:bg-ash absolute top-9 -left-8 h-px w-8 origin-left transition-colors duration-500 md:-left-12 md:w-12"
-      />
-
       <div
         ref={card}
         onPointerMove={
@@ -144,14 +137,29 @@ export function Credentials() {
     [filter],
   );
 
-  // The spine fills as the list scrolls past. Spring keeps it from snapping
-  // when the filter changes the list height mid-scroll.
+  // The years the visible set covers — the head says something the count in
+  // the column beside it does not.
+  const span = useMemo(() => {
+    const years = entries
+      .map((entry) => Number(entry.period.slice(0, 4)))
+      .filter((year) => Number.isFinite(year));
+    if (!years.length) return "—";
+    const first = Math.min(...years);
+    const last = Math.max(...years);
+    return first === last ? `${first}` : `${first} — ${last}`;
+  }, [entries]);
+
+  // The rail across the head of the case fills as the case scrolls past.
+  // Spring keeps it from snapping when a filter changes the height mid-scroll.
   const { scrollYProgress } = useScroll({
     target: list,
-    offset: ["start 78%", "end 55%"],
+    offset: ["start 85%", "end 60%"],
   });
-  const raw = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  const scaleY = useSpring(raw, { stiffness: 140, damping: 28, mass: 0.5 });
+  const progress = useSpring(useTransform(scrollYProgress, [0, 1], [0, 1]), {
+    stiffness: 140,
+    damping: 28,
+    mass: 0.5,
+  });
 
   return (
     <section className="border-line/60 border-t py-24 md:py-36">
@@ -231,23 +239,87 @@ export function Credentials() {
             </Reveal>
           </div>
 
-          <div ref={list} className="relative pl-8 md:pl-12">
-            {/* Spine */}
-            <span aria-hidden className="bg-line absolute top-2 bottom-2 left-0 w-px" />
-            <motion.span
-              aria-hidden
-              className="bg-chalk absolute top-2 bottom-2 left-0 w-px origin-top"
-              style={reduceMotion ? { scaleY: 1 } : { scaleY }}
-            />
+          {/* The cards live in a case of their own. The read-through is the
+              rail across its head, which belongs to the container rather than
+              running down the side of the cards. */}
+          <motion.div
+            ref={list}
+            initial={reduceMotion ? false : { opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-12% 0px" }}
+            transition={{ duration: 0.9, ease: EASE }}
+            className="border-line bg-pit/40 relative overflow-hidden rounded-[28px] border"
+          >
+            <span aria-hidden className="grid-veil absolute inset-0 opacity-30" />
 
-            <motion.ul layout className="flex flex-col gap-5">
-              <AnimatePresence mode="popLayout" initial={false}>
-                {entries.map((entry, i) => (
-                  <Card key={`${entry.title}-${entry.period}`} entry={entry} index={i} />
-                ))}
+            {/* Head: what is on show, and how far through it you are. */}
+            <div className="border-line relative flex items-baseline justify-between gap-6 border-b px-6 py-5 md:px-8">
+              <p className="label">The record</p>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.p
+                  key={filter}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.28, ease: EASE }}
+                  className="label tabular-nums"
+                >
+                  {span}
+                </motion.p>
               </AnimatePresence>
-            </motion.ul>
-          </div>
+
+              <motion.span
+                aria-hidden
+                className="bg-chalk absolute inset-x-0 bottom-0 h-px origin-left"
+                style={reduceMotion ? { scaleX: 1 } : { scaleX: progress }}
+              />
+            </div>
+
+            <div className="relative p-5 md:p-7">
+              <motion.ul layout className="flex flex-col gap-4">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  {entries.map((entry, i) => (
+                    <Card
+                      key={`${entry.title}-${entry.period}`}
+                      entry={entry}
+                      index={i}
+                    />
+                  ))}
+                </AnimatePresence>
+              </motion.ul>
+            </div>
+
+            {/* Foot: the whole record by kind, whatever is filtered above. */}
+            <div className="border-line relative flex flex-wrap items-center gap-x-6 gap-y-2 border-t px-6 py-5 md:px-8">
+              {TALLY.map(([kind, count]) => (
+                <span
+                  key={kind}
+                  className={`font-mono text-[10px] tracking-[0.16em] uppercase transition-colors duration-500 ${
+                    filter === kind || filter === "All" ? "text-smoke" : "text-line"
+                  }`}
+                >
+                  {kind}{" "}
+                  <span className="text-ash tabular-nums">
+                    {String(count).padStart(2, "0")}
+                  </span>
+                </span>
+              ))}
+            </div>
+
+            {/* Corner ticks, so the case reads as an instrument. */}
+            {[
+              "top-4 left-4 border-t border-l",
+              "top-4 right-4 border-t border-r",
+              "bottom-4 left-4 border-b border-l",
+              "bottom-4 right-4 border-b border-r",
+            ].map((corner) => (
+              <span
+                key={corner}
+                aria-hidden
+                className={`border-ash/30 pointer-events-none absolute size-3 ${corner}`}
+              />
+            ))}
+          </motion.div>
         </div>
       </div>
     </section>
