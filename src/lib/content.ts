@@ -24,7 +24,8 @@ export const SOCIALS = [
 export const NAV_LINKS = [
   { label: "Work", href: "#work" },
   { label: "About", href: "#about" },
-  { label: "Stack", href: "#stack" },
+  { label: "Toolkit", href: "#stack" },
+  { label: "Credentials", href: "#credentials" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -44,7 +45,7 @@ export const ABOUT_BODY = [
 export const STATS = [
   { value: 36, suffix: "", label: "Public repositories" },
   { value: 6, suffix: "", label: "Featured builds" },
-  { value: 3, suffix: "", label: "Hackathon entries" },
+  { value: 6, suffix: "", label: "Hackathon entries" },
   { value: 2028, suffix: "", label: "Graduating", plain: true },
 ];
 
@@ -199,7 +200,11 @@ export const STACK_GROUPS = [
   },
 ];
 
-export type TimelineKind = "Education" | "Certification" | "Recognition";
+export type TimelineKind =
+  | "Education"
+  | "Certification"
+  | "Recognition"
+  | "Event";
 
 export const TIMELINE: {
   kind: TimelineKind;
@@ -242,6 +247,27 @@ export const TIMELINE: {
     title: "ETHOnline",
     org: "Zyro",
     note: "Sponsored by 1inch, The Graph and the Uniswap Foundation.",
+  },
+  {
+    kind: "Event",
+    period: "2026",
+    title: "Smart India Hackathon",
+    org: "Ministry of Education's Innovation Cell · AICTE",
+    note: "Second run at the national problem statements, building on what the 2025 entry taught us about scoping to a ministry's actual brief.",
+  },
+  {
+    kind: "Event",
+    period: "2025",
+    title: "Cybersecurity Hackathon",
+    org: "IIT Madras",
+    note: "Three days in the hackathon rooms at IIT Madras, working the offensive-security side of the brief.",
+  },
+  {
+    kind: "Event",
+    period: "2025",
+    title: "Smart India Hackathon",
+    org: "Ministry of Education's Innovation Cell · AICTE",
+    note: "First national hackathon — a government problem statement taken from team formation through to a working build.",
   },
 ];
 

@@ -19,7 +19,7 @@ export function Contact() {
     >
       <div className="mx-auto max-w-[1500px] px-6 pt-24 pb-14 md:px-10 md:pt-36">
         <Reveal className="flex items-baseline gap-4">
-          <span className="label shrink-0">04</span>
+          <span className="label shrink-0">06</span>
           <DrawLine className="translate-y-[-0.35em]" />
           <span className="label shrink-0">Open to work &amp; collaboration</span>
         </Reveal>

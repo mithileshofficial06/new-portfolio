@@ -6,7 +6,6 @@ import { useState } from "react";
 import { STACK_GROUPS } from "@/lib/content";
 import { TECH_ICONS } from "@/lib/tech-icons";
 
-import { Credentials } from "./credentials";
 import { DrawLine, EASE, Reveal, SectionHeading } from "./scroll-primitives";
 
 /** Tools with no official mark of their own wear their initials instead. */
@@ -186,11 +185,10 @@ export function Stack() {
         <SectionHeading
           id="stack"
           index="03"
-          title="Stack & history"
+          title="Toolkit"
           aside="What I reach for"
         />
         <StackGrid />
-        <Credentials />
       </div>
     </section>
   );

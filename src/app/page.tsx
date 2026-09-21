@@ -1,5 +1,6 @@
 import { About } from "@/components/about";
 import { Contact } from "@/components/contact";
+import { Credentials } from "@/components/credentials";
 import { GlobalTexture } from "@/components/global-texture";
 import { Hero } from "@/components/hero";
 import { Nav } from "@/components/nav";
@@ -23,6 +24,7 @@ export default function Home() {
         <About />
         <VelocityMarquee />
         <Stack />
+        <Credentials />
         <Why />
         <Contact />
       </main>

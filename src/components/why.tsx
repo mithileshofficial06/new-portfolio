@@ -129,7 +129,7 @@ export function Why() {
       <div className="mx-auto max-w-[1500px] px-6 md:px-10">
         <SectionHeading
           id="why"
-          index="04"
+          index="05"
           title="Why choose me"
           aside="The short case"
         />

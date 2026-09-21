@@ -15,9 +15,15 @@ import { useMemo, useRef, useState } from "react";
 
 import { TIMELINE, type TimelineKind } from "@/lib/content";
 
-import { EASE, Reveal } from "./scroll-primitives";
+import { EASE, Reveal, SectionHeading } from "./scroll-primitives";
 
-const FILTERS = ["All", "Education", "Certification", "Recognition"] as const;
+const FILTERS = [
+  "All",
+  "Education",
+  "Certification",
+  "Recognition",
+  "Event",
+] as const;
 type Filter = (typeof FILTERS)[number];
 
 /** Each family gets a mark so the badge reads before the words do. */
@@ -27,6 +33,8 @@ const GLYPH: Record<TimelineKind, string> = {
     "M12 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Zm-4 11.9V22l4-2.1 4 2.1v-8.1a7.4 7.4 0 0 1-8 0Z",
   Recognition:
     "M7 2h10v2h4v3a4 4 0 0 1-3.6 4 5.5 5.5 0 0 1-3.4 2.8V17h3v2H7v-2h3v-3.2A5.5 5.5 0 0 1 6.6 11 4 4 0 0 1 3 7V4h4V2Zm0 4H5v1a2 2 0 0 0 2 2V6Zm12 0h-2v3a2 2 0 0 0 2-2V6Z",
+  Event:
+    "M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7ZM5 10h14v10H5V10Zm2.5 2v2h2v-2h-2Zm4.5 0v2h2v-2h-2Z",
 };
 
 function Card({
@@ -146,91 +154,102 @@ export function Credentials() {
   const scaleY = useSpring(raw, { stiffness: 140, damping: 28, mass: 0.5 });
 
   return (
-    <div className="mt-24 grid gap-12 md:mt-32 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,2fr)] lg:gap-20">
-      <div className="lg:sticky lg:top-28 lg:self-start">
-        <Reveal>
-          <p className="label">Education &amp; recognition</p>
-          <p className="text-smoke mt-5 max-w-[32ch] text-sm leading-relaxed">
-            Studying in Chennai, certified in security, and shipping at
-            hackathons in between.
-          </p>
-
-          {/* Count swaps with the filter rather than sitting still. */}
-          <div className="border-line mt-8 flex items-baseline gap-3 border-b pb-4">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.span
-                key={filter}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.3, ease: EASE }}
-                className="font-display text-chalk text-4xl leading-none tabular-nums md:text-5xl"
-              >
-                {String(entries.length).padStart(2, "0")}
-              </motion.span>
-            </AnimatePresence>
-            <span className="label">
-              {filter === "All" ? "entries" : filter}
-            </span>
-          </div>
-
-          {/* Filters: one pill slides between the labels. */}
-          <div className="mt-6 flex flex-wrap gap-2">
-            {FILTERS.map((item) => {
-              const isActive = item === filter;
-              return (
-                <button
-                  key={item}
-                  type="button"
-                  onClick={() => setFilter(item)}
-                  aria-pressed={isActive}
-                  className={`relative rounded-full px-4 py-2 font-mono text-[10px] tracking-[0.18em] uppercase transition-colors duration-400 ${
-                    isActive ? "text-void" : "text-ash hover:text-chalk"
-                  }`}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="credential-filter"
-                      aria-hidden
-                      className="bg-chalk absolute inset-0 -z-10 rounded-full"
-                      transition={
-                        reduceMotion
-                          ? { duration: 0 }
-                          : { type: "spring", stiffness: 420, damping: 34 }
-                      }
-                    />
-                  )}
-                  <span
-                    aria-hidden
-                    className={`border-line absolute inset-0 -z-20 rounded-full border transition-opacity duration-400 ${
-                      isActive ? "opacity-0" : "opacity-100"
-                    }`}
-                  />
-                  {item}
-                </button>
-              );
-            })}
-          </div>
-        </Reveal>
-      </div>
-
-      <div ref={list} className="relative pl-8 md:pl-12">
-        {/* Spine */}
-        <span aria-hidden className="bg-line absolute top-2 bottom-2 left-0 w-px" />
-        <motion.span
-          aria-hidden
-          className="bg-chalk absolute top-2 bottom-2 left-0 w-px origin-top"
-          style={reduceMotion ? { scaleY: 1 } : { scaleY }}
+    <section className="border-line/60 border-t py-24 md:py-36">
+      <div className="mx-auto max-w-[1500px] px-6 md:px-10">
+        <SectionHeading
+          id="credentials"
+          index="04"
+          title="Credentials"
+          aside="Papers, podiums, hack nights"
         />
 
-        <motion.ul layout className="flex flex-col gap-5">
-          <AnimatePresence mode="popLayout" initial={false}>
-            {entries.map((entry, i) => (
-              <Card key={`${entry.title}-${entry.period}`} entry={entry} index={i} />
-            ))}
-          </AnimatePresence>
-        </motion.ul>
+        <div className="mt-16 grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,2fr)] lg:gap-20">
+          <div className="lg:sticky lg:top-28 lg:self-start">
+            <Reveal>
+              <p className="label">Sort the record</p>
+              <p className="text-smoke mt-5 max-w-[32ch] text-sm leading-relaxed">
+                Studying in Chennai, certified in security, and shipping at
+                hackathons in between.
+              </p>
+
+              {/* Count swaps with the filter rather than sitting still. */}
+              <div className="border-line mt-8 flex items-baseline gap-3 border-b pb-4">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={filter}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.3, ease: EASE }}
+                    className="font-display text-chalk text-4xl leading-none tabular-nums md:text-5xl"
+                  >
+                    {String(entries.length).padStart(2, "0")}
+                  </motion.span>
+                </AnimatePresence>
+                <span className="label">
+                  {filter === "All" ? "entries" : filter}
+                </span>
+              </div>
+
+              {/* Filters: one pill slides between the labels. */}
+              <div className="mt-6 flex flex-wrap gap-2">
+                {FILTERS.map((item) => {
+                  const isActive = item === filter;
+                  return (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => setFilter(item)}
+                      aria-pressed={isActive}
+                      className={`relative rounded-full px-4 py-2 font-mono text-[10px] tracking-[0.18em] uppercase transition-colors duration-400 ${
+                        isActive ? "text-void" : "text-ash hover:text-chalk"
+                      }`}
+                    >
+                      {isActive && (
+                        <motion.span
+                          layoutId="credential-filter"
+                          aria-hidden
+                          className="bg-chalk absolute inset-0 -z-10 rounded-full"
+                          transition={
+                            reduceMotion
+                              ? { duration: 0 }
+                              : { type: "spring", stiffness: 420, damping: 34 }
+                          }
+                        />
+                      )}
+                      <span
+                        aria-hidden
+                        className={`border-line absolute inset-0 -z-20 rounded-full border transition-opacity duration-400 ${
+                          isActive ? "opacity-0" : "opacity-100"
+                        }`}
+                      />
+                      {item}
+                    </button>
+                  );
+                })}
+              </div>
+            </Reveal>
+          </div>
+
+          <div ref={list} className="relative pl-8 md:pl-12">
+            {/* Spine */}
+            <span aria-hidden className="bg-line absolute top-2 bottom-2 left-0 w-px" />
+            <motion.span
+              aria-hidden
+              className="bg-chalk absolute top-2 bottom-2 left-0 w-px origin-top"
+              style={reduceMotion ? { scaleY: 1 } : { scaleY }}
+            />
+
+            <motion.ul layout className="flex flex-col gap-5">
+              <AnimatePresence mode="popLayout" initial={false}>
+                {entries.map((entry, i) => (
+                  <Card key={`${entry.title}-${entry.period}`} entry={entry} index={i} />
+                ))}
+              </AnimatePresence>
+            </motion.ul>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
