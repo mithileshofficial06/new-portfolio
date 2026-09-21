@@ -1,42 +1,164 @@
 "use client";
 
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "motion/react";
+import { useRef, useState } from "react";
 
 import { STACK_GROUPS, TIMELINE } from "@/lib/content";
+import { TECH_ICONS } from "@/lib/tech-icons";
 
 import { DrawLine, EASE, Reveal, SectionHeading } from "./scroll-primitives";
 
-function StackGrid() {
-  return (
-    <div className="mt-16 grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-      {STACK_GROUPS.map((group, g) => (
-        <div key={group.title}>
-          <Reveal delay={g * 0.05}>
-            <p className="label">{group.title}</p>
-          </Reveal>
-          <DrawLine className="mt-3" delay={g * 0.05} />
+/** Tools with no official mark of their own wear their initials instead. */
+const MONOGRAMS: Record<string, string> = {
+  SQL: "SQL",
+  BullMQ: "BMQ",
+  Nmap: "NM",
+  Nuclei: "NC",
+  Subfinder: "SF",
+};
 
-          <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2.5">
-            {group.items.map((item, i) => (
-              <motion.li
-                key={item}
-                initial={{ opacity: 0, y: 14 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-8% 0px" }}
-                transition={{
-                  duration: 0.6,
-                  ease: EASE,
-                  delay: g * 0.05 + i * 0.035,
-                }}
-                className="text-smoke hover:text-chalk cursor-default text-base font-light tracking-[-0.02em] transition-colors duration-300 md:text-lg"
-              >
-                {item}
-              </motion.li>
-            ))}
-          </ul>
-        </div>
-      ))}
+type Active = { name: string; group: string } | null;
+
+function Tile({
+  name,
+  group,
+  order,
+  active,
+  onActivate,
+}: {
+  name: string;
+  group: string;
+  order: number;
+  active: Active;
+  onActivate: (value: Active) => void;
+}) {
+  const reduceMotion = useReducedMotion();
+  const path = TECH_ICONS[name];
+  const isActive = active?.name === name;
+  const isMuted = active !== null && !isActive;
+
+  return (
+    <motion.li
+      initial={reduceMotion ? false : { opacity: 0, scale: 0.85, y: 14 }}
+      whileInView={{ opacity: 1, scale: 1, y: 0 }}
+      viewport={{ once: true, margin: "-10% 0px" }}
+      transition={{ duration: 0.55, ease: EASE, delay: Math.min(order * 0.03, 0.4) }}
+      onPointerEnter={() => onActivate({ name, group })}
+      onPointerLeave={() => onActivate(null)}
+    >
+      <motion.div
+        title={name}
+        className="border-line bg-coal relative flex size-16 items-center justify-center rounded-2xl border md:size-[4.5rem]"
+        animate={
+          reduceMotion
+            ? undefined
+            : {
+                opacity: isMuted ? 0.36 : 1,
+                y: isActive ? -6 : 0,
+                borderColor: isActive ? "#77777f" : "#1e1e21",
+              }
+        }
+        transition={{ duration: 0.45, ease: EASE }}
+      >
+        {/* Glow that blooms behind the tile while it holds the readout. */}
+        <span
+          aria-hidden
+          className={`absolute -inset-2 -z-10 rounded-[1.4rem] bg-[radial-gradient(circle_at_center,rgba(250,250,250,0.14),transparent_70%)] transition-opacity duration-500 ${
+            isActive ? "opacity-100" : "opacity-0"
+          }`}
+        />
+
+        {path ? (
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden
+            className={`size-7 transition-colors duration-500 md:size-8 ${
+              isActive ? "text-chalk" : "text-smoke"
+            }`}
+          >
+            <path d={path} fill="currentColor" />
+          </svg>
+        ) : (
+          <span
+            aria-hidden
+            className={`font-mono text-xs tracking-[0.1em] transition-colors duration-500 ${
+              isActive ? "text-chalk" : "text-smoke"
+            }`}
+          >
+            {MONOGRAMS[name] ?? name.slice(0, 2).toUpperCase()}
+          </span>
+        )}
+
+        <span className="sr-only">{name}</span>
+      </motion.div>
+    </motion.li>
+  );
+}
+
+function StackGrid() {
+  const [active, setActive] = useState<Active>(null);
+  const total = STACK_GROUPS.reduce((sum, g) => sum + g.items.length, 0);
+
+  // Stagger runs across the whole grid rather than restarting per group, so
+  // the tiles arrive as one wave instead of five.
+  let tile = 0;
+
+  return (
+    <div className="mt-16" onPointerLeave={() => setActive(null)}>
+      {/* Museum label: the icons carry the grid, this line names what you touch. */}
+      <div className="border-line flex items-baseline justify-between gap-6 border-b pb-4">
+        <p className="label">{active ? active.group : "Across five groups"}</p>
+
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.p
+            key={active?.name ?? "idle"}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3, ease: EASE }}
+            className="font-display text-chalk text-right text-xl leading-none tracking-[-0.03em] uppercase md:text-2xl"
+          >
+            {active ? active.name : `${total} tools`}
+          </motion.p>
+        </AnimatePresence>
+      </div>
+
+      {/* One full-width row per group: the tiles are a fixed pitch, so any
+          column split leaves dead cells at the end of the short groups. */}
+      <div className="mt-12 flex flex-col gap-11">
+        {STACK_GROUPS.map((group) => (
+          <div key={group.title}>
+            <div className="flex items-center gap-4">
+              <Reveal>
+                <p className="label whitespace-nowrap">{group.title}</p>
+              </Reveal>
+              <DrawLine />
+              <span className="label tabular-nums">
+                {String(group.items.length).padStart(2, "0")}
+              </span>
+            </div>
+
+            <ul className="mt-6 flex flex-wrap gap-3">
+              {group.items.map((item) => (
+                <Tile
+                  key={item}
+                  name={item}
+                  group={group.title}
+                  order={tile++}
+                  active={active}
+                  onActivate={setActive}
+                />
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
