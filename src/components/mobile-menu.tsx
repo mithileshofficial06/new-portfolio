@@ -112,7 +112,14 @@ export function MobileMenu() {
                       </a>
                     ))}
                   </div>
-                  <p className="label mt-6">{PROFILE.email}</p>
+                  <a
+                    href={PROFILE.resume}
+                    download="Mithilesh-KS-Resume.pdf"
+                    className="label text-chalk mt-6 inline-block"
+                  >
+                    R&eacute;sum&eacute; &darr;
+                  </a>
+                  <p className="label mt-4">{PROFILE.email}</p>
                 </motion.div>
               </motion.div>
             )}

@@ -60,6 +60,33 @@ export function Contact() {
           </p>
         </Reveal>
 
+        {/* ---------- the résumé ---------- */}
+        {/* The hero button opens the file; this one hands it over. Same PDF,
+            served straight out of /public, so the download is same-origin and
+            needs no third-party viewer. */}
+        <Reveal className="mt-10 flex justify-center" delay={0.2}>
+          <a
+            href={PROFILE.resume}
+            download="Mithilesh-KS-Resume.pdf"
+            className="group border-line hover:border-ash bg-coal/40 inline-flex items-center gap-4 rounded-full border py-3 pr-4 pl-6 transition-colors duration-500"
+          >
+            <span className="text-chalk font-mono text-[11px] tracking-[0.2em] uppercase">
+              Download r&eacute;sum&eacute;
+            </span>
+            <span className="text-ash group-hover:text-chalk font-mono text-[10px] tracking-[0.16em] transition-colors duration-500">
+              PDF
+            </span>
+            <span className="border-line bg-void group-hover:border-ash flex size-8 items-center justify-center rounded-full border transition-colors duration-500">
+              <span
+                aria-hidden
+                className="text-chalk transition-transform duration-500 group-hover:translate-y-0.5"
+              >
+                &darr;
+              </span>
+            </span>
+          </a>
+        </Reveal>
+
         {/* ---------- links ---------- */}
         <div
           className="mt-16 grid gap-px md:mt-24"
