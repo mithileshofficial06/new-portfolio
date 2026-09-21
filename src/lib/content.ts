@@ -199,32 +199,45 @@ export const STACK_GROUPS = [
   },
 ];
 
-export const TIMELINE = [
+export type TimelineKind = "Education" | "Certification" | "Recognition";
+
+export const TIMELINE: {
+  kind: TimelineKind;
+  period: string;
+  title: string;
+  org: string;
+  note: string;
+}[] = [
   {
+    kind: "Education",
     period: "2024 — 2028",
     title: "B.E. Computer Science Engineering",
     org: "Loyola-ICAM College of Engineering and Technology, Chennai",
     note: "Currently in the third year.",
   },
   {
+    kind: "Certification",
     period: "2025",
     title: "Google Cybersecurity Certificate",
     org: "Google · Coursera",
     note: "Threat models, network defence and the tooling underneath AISA.",
   },
   {
+    kind: "Recognition",
     period: "2026",
     title: "Top 10 — Ctrl+Alt+Hack",
     org: "VaxiTrack",
     note: "AI immunization tracking with voice reminders for low-connectivity families.",
   },
   {
+    kind: "Recognition",
     period: "2026",
     title: "U.S. Consulate × Snap",
     org: "NaviLens AR",
     note: "Augmented reality city discovery built on Snap's AR platform.",
   },
   {
+    kind: "Recognition",
     period: "2026",
     title: "ETHOnline",
     org: "Zyro",
