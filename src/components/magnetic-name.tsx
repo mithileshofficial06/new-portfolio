@@ -237,12 +237,20 @@ export function MagneticName({
             revealed ? "overflow-visible" : "overflow-hidden"
           }`}
         >
+          {/* Each character rides up out of its slot and rolls level on the
+              way, hinged on its own baseline. The slot's overflow does the
+              rest: a letter still tipped away is cut off by the box it is
+              climbing out of, so the row reads as type being set rather than
+              as text sliding upward. */}
           <motion.span
             className="inline-block will-change-transform"
-            initial={{ y: "118%" }}
-            animate={play ? { y: "0%" } : undefined}
+            style={{ transformOrigin: "50% 100%" }}
+            initial={{ y: "118%", rotateX: -78, transformPerspective: 620 }}
+            animate={
+              play ? { y: "0%", rotateX: 0, transformPerspective: 620 } : undefined
+            }
             transition={{
-              duration: reduceMotion ? 0 : 1.1,
+              duration: reduceMotion ? 0 : 1.25,
               ease: [0.16, 1, 0.3, 1],
               delay: reduceMotion ? 0 : delay + index * stagger,
             }}

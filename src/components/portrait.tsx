@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import Image from "next/image";
 
 import { useIntroReady } from "./intro-context";
@@ -30,6 +30,7 @@ export const FIGURE_BOX =
  */
 export function Portrait() {
   const ready = useIntroReady();
+  const reduceMotion = useReducedMotion();
 
   return (
     <div
@@ -39,31 +40,45 @@ export function Portrait() {
          left and the two never meet. */
       className="pointer-events-none absolute inset-0 z-10 flex items-end justify-center lg:z-30 lg:justify-end lg:pr-10"
     >
+      {/* He settles out of a slight oversize as he lands. */}
       <motion.div
         className={FIGURE_BOX}
-        initial={{ opacity: 0, y: 46, scale: 1.04 }}
+        initial={reduceMotion ? false : { opacity: 0, y: 38, scale: 1.07 }}
         animate={ready ? { opacity: 1, y: 0, scale: 1 } : undefined}
-        transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
+        transition={{ duration: 2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
       >
-        {/* Rim glow — separates a black suit from a black page. */}
+        {/* Rim glow — separates a black suit from a black page. Deliberately
+            outside the clip below: run through it, its own rectangle gets a
+            hard top edge and the reveal drags a visible seam across the
+            frame. The glow just fades with the rest of him. */}
         <div className="absolute inset-0 -z-10 translate-y-[8%] scale-[1.16] bg-[radial-gradient(ellipse_at_50%_44%,rgba(255,255,255,0.15),transparent_64%)] blur-2xl" />
 
-        <Image
-          src="/profile-cut.png"
-          alt="Mithilesh KS"
-          fill
-          priority
-          sizes="(max-width: 1024px) 74vw, 40vw"
-          /* Pushed well back on small screens, where he sits behind the type
-             instead of beside it. */
-          className="object-contain object-bottom [filter:grayscale(1)_contrast(1.05)_brightness(0.46)] lg:[filter:grayscale(1)_contrast(1.1)_brightness(0.97)]"
-          style={{
-            maskImage:
-              "linear-gradient(to bottom, #000 62%, rgba(0,0,0,0.4) 88%, transparent 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to bottom, #000 62%, rgba(0,0,0,0.4) 88%, transparent 100%)",
-          }}
-        />
+        {/* He is uncovered from the floor up rather than faded in on the
+            spot: the clip's top edge climbs him, so he reads as rising into
+            the frame behind a curtain leaving it the same way. */}
+        <motion.div
+          className="absolute inset-0"
+          initial={reduceMotion ? false : { clipPath: "inset(100% 0% 0% 0%)" }}
+          animate={ready ? { clipPath: "inset(0% 0% 0% 0%)" } : undefined}
+          transition={{ duration: 1.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+        >
+          <Image
+            src="/profile-cut.png"
+            alt="Mithilesh KS"
+            fill
+            priority
+            sizes="(max-width: 1024px) 74vw, 40vw"
+            /* Pushed well back on small screens, where he sits behind the
+               type instead of beside it. */
+            className="object-contain object-bottom [filter:grayscale(1)_contrast(1.05)_brightness(0.46)] lg:[filter:grayscale(1)_contrast(1.1)_brightness(0.97)]"
+            style={{
+              maskImage:
+                "linear-gradient(to bottom, #000 62%, rgba(0,0,0,0.4) 88%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, #000 62%, rgba(0,0,0,0.4) 88%, transparent 100%)",
+            }}
+          />
+        </motion.div>
       </motion.div>
     </div>
   );
