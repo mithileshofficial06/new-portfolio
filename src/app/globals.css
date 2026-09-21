@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Monochrome scale — the entire palette. */
+  --color-void: #050505;
+  --color-pit: #0a0a0b;
+  --color-coal: #121214;
+  --color-line: #1e1e21;
+  --color-line-soft: #141416;
+  --color-ash: #77777f;
+  --color-smoke: #a0a0a8;
+  --color-chalk: #fafafa;
+
+  --font-display: var(--font-archivo), "Arial Black", sans-serif;
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--color-void);
+}
+
+body {
+  background: var(--color-void);
+  color: var(--color-chalk);
+  font-family: var(--font-sans);
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-chalk);
+  color: var(--color-void);
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-void);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ash);
+}
+
+/* ---------- utilities ---------- */
+
+@utility label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-ash);
+}
+
+/* Variable-weight type that thickens when its group is hovered. */
+@utility wght-shift {
+  font-variation-settings: "wght" 190;
+  transition:
+    font-variation-settings 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    letter-spacing 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 400ms ease;
+}
+
+.group:hover .wght-shift {
+  font-variation-settings: "wght" 640;
+  letter-spacing: -0.045em;
+}
+
+/* Hairline grid that sits under everything. */
+@utility grid-veil {
+  background-image:
+    linear-gradient(to right, var(--color-line-soft) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-line-soft) 1px, transparent 1px);
+  background-size: 88px 88px;
+}
+
+/* ---------- keyframes ---------- */
+
+@keyframes grain {
+  0%,
+  100% { transform: translate(0, 0); }
+  10% { transform: translate(-4%, -4%); }
+  20% { transform: translate(-8%, 3%); }
+  30% { transform: translate(5%, -6%); }
+  40% { transform: translate(-3%, 8%); }
+  50% { transform: translate(-6%, 3%); }
+  60% { transform: translate(7%, 0%); }
+  70% { transform: translate(0%, 6%); }
+  80% { transform: translate(4%, -4%); }
+  90% { transform: translate(-4%, 5%); }
+}
+
+@keyframes drift {
+  0%,
+  100% { transform: translate3d(-4%, -2%, 0) scale(1); }
+  50% { transform: translate3d(4%, 3%, 0) scale(1.15); }
+}
+
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.85); opacity: 0.8; }
+  70% { transform: scale(2.4); opacity: 0; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(1100%); }
+}
+
+/* Quarter turn, then a beat of rest, four times round.
+   Each step is 0.45s of travel + 1s held = 1.45s; 4 steps = 5.8s.
+   The percentages are those seconds over the 5.8s total. */
+@keyframes quarter-turn {
+  0%      { transform: rotate(0deg); }
+  7.76%   { transform: rotate(90deg); }
+  25%     { transform: rotate(90deg); }
+  32.76%  { transform: rotate(180deg); }
+  50%     { transform: rotate(180deg); }
+  57.76%  { transform: rotate(270deg); }
+  75%     { transform: rotate(270deg); }
+  82.76%  { transform: rotate(360deg); }
+  100%    { transform: rotate(360deg); }
+}
+
+.animate-quarter-turn {
+  animation: quarter-turn 5.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+.animate-grain { animation: grain 0.9s steps(1) infinite; }
+.animate-drift { animation: drift 24s ease-in-out infinite; }
+.animate-marquee { animation: marquee 42s linear infinite; }
+.animate-pulse-ring { animation: pulse-ring 2.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
+.animate-scan { animation: scan 7s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+.pause-on-hover:hover .animate-marquee { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-quarter-turn,
+  .animate-grain,
+  .animate-drift,
+  .animate-marquee,
+  .animate-pulse-ring,
+  .animate-scan {
+    animation: none !important;
+  }
+}
