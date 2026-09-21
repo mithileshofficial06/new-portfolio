@@ -309,11 +309,11 @@ export function Hero() {
           {/* Runs the full width: the case and the links stay left of him,
               the scroll cue closes the frame on his side, in front of the
               fade where his legs give out. */}
-          <div className="relative z-40 mt-auto flex w-full flex-wrap items-end justify-between gap-8 pt-16">
+          <div className="relative z-40 mt-auto flex w-full flex-wrap items-end justify-between gap-8 pt-12">
             <Rise
               play={ready}
               delay={BEAT.baseLine}
-              className="flex max-w-[17rem] flex-col gap-5"
+              className="flex max-w-[17rem] flex-col gap-4"
             >
               <p className="label leading-relaxed">
                 Full stack development with a cybersecurity habit — Python,
@@ -327,9 +327,9 @@ export function Hero() {
                     href={social.href}
                     target={social.href.startsWith("http") ? "_blank" : undefined}
                     rel="noreferrer"
-                    className="label hover:text-chalk transition-colors duration-300"
+                    className="label text-chalk hover:text-chalk font-medium transition-colors duration-300"
                   >
-                    <span className="after:bg-chalk relative after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:transition-[width] after:duration-400 hover:after:w-full">
+                    <span className="after:bg-chalk relative after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:transition-[width] after:duration-400">
                       {social.label}
                     </span>
                   </a>

@@ -226,7 +226,7 @@ function Panels() {
     <div className="mt-14 hidden lg:block">
       <div
         ref={deck}
-        aria-label="Why choose me"
+        aria-label="How I work"
         tabIndex={0}
         onPointerEnter={() => setHeld(true)}
         onPointerLeave={() => setHeld(false)}
@@ -442,7 +442,7 @@ export function Why() {
         <SectionHeading
           id="why"
           index="05"
-          title="Why choose me"
+          title="How I work"
           aside="The short case"
         />
         <Panels />

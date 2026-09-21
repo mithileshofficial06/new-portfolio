@@ -217,7 +217,7 @@ export const STACK_GROUPS = [
   },
   {
     title: "Tooling",
-    items: ["Git", "GitHub", "Linux", "Vercel", "Supabase", "Turborepo", "Docker"],
+    items: ["Git", "GitHub", "Linux", "Vercel", "Supabase", "Turborepo"],
   },
 ];
 
