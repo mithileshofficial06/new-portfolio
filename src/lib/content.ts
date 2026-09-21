@@ -10,6 +10,8 @@ export const PROFILE = {
   timezone: "Asia/Kolkata",
   coordinates: "13.0827° N / 80.2707° E",
   email: "mithileshofficial06@gmail.com",
+  /** Served straight out of /public — drop the file in as public/resume.pdf. */
+  resume: "/resume.pdf",
   available: true,
   blurb:
     "Aspiring full stack developer with a solid grasp of building practical applications in Python, FastAPI, Next.js and PostgreSQL — with a cybersecurity habit that keeps the edges tight.",

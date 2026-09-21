@@ -1,61 +1,50 @@
 "use client";
 
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { motion } from "motion/react";
 import Image from "next/image";
-import { useRef } from "react";
 
 import { useIntroReady } from "./intro-context";
 
 /**
- * The background-removed subject, standing on the centre line.
+ * The figure's box. The shell behind him lays out with the same string, so
+ * the animation stays centred on him at every width rather than being pinned
+ * to coordinates that only hold on one screen — and the two cannot drift
+ * apart the way two copies of it would.
+ */
+export const FIGURE_BOX =
+  "relative h-[46%] w-[min(74vw,390px)] sm:h-[56%] lg:h-[90%] lg:w-[min(40vw,600px)]";
+
+/**
+ * The background-removed subject, planted bottom-right on the page gutter.
  *
- * He is the axis the rest of the hero is arranged around: the name is set
- * across him, the meta columns flank him, and the actions float in front of
- * his fade. Bottom-anchored so he is grounded on the marquee rather than
- * floating above it. No pointer tracking — a portrait that drifts with the
- * cursor reads as a sticker, not a subject. The only movement he takes is
- * scroll: he leaves a little slower than the type does, which is what gives
- * the stage its depth.
+ * He is looking off to his right, so he sits on the right with the type in
+ * the space he is looking into — the figure reads as facing the content
+ * instead of away from it. Bottom-anchored and flush to the same gutter as
+ * the nav, so he is grounded on the grid rather than floating in it. No
+ * pointer tracking — a portrait that drifts with the cursor reads as a
+ * sticker, not a subject. He takes no scroll movement of his own either: the
+ * stage already carries him, and measuring him for a parallax of his own
+ * means measuring an element inside a transformed ancestor, which came back
+ * wrong and scaled him off the right edge of the frame. The shell turning
+ * behind him is what makes the corner live.
  */
 export function Portrait() {
   const ready = useIntroReady();
-  const reduceMotion = useReducedMotion();
-  const frame = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: frame,
-    offset: ["start start", "end start"],
-  });
-  // Against the stage's own 14% descent this nets out to roughly 8% — he
-  // trails the type instead of moving with it.
-  const drag = useTransform(scrollYProgress, [0, 1], ["0%", "-6%"]);
-  const swell = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
 
   return (
     <div
-      ref={frame}
       aria-hidden
-      /* Behind the type on small screens, where he shares the centre with it;
-         in front of it from lg, where the name is set wide enough that only
-         the crown of his head crosses the letters. */
-      className="pointer-events-none absolute inset-0 z-10 flex items-end justify-center lg:z-30"
+      /* Behind the type on small screens, where he shares the frame with it;
+         in front of it from lg, where the type has its own column to the
+         left and the two never meet. */
+      className="pointer-events-none absolute inset-0 z-10 flex items-end justify-center lg:z-30 lg:justify-end lg:pr-10"
     >
       <motion.div
-        className="relative h-[44%] w-[min(78vw,400px)] sm:h-[54%] lg:h-[72%] lg:w-[min(38vw,520px)]"
+        className={FIGURE_BOX}
         initial={{ opacity: 0, y: 46, scale: 1.04 }}
         animate={ready ? { opacity: 1, y: 0, scale: 1 } : undefined}
         transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
-        style={reduceMotion ? undefined : { y: drag, scale: swell }}
       >
-        {/* Halo — a hairline ring set behind the shoulders, drawn on once the
-            figure has landed. It gives the centred composition a centre. */}
-        <motion.span
-          className="border-line/70 absolute top-[6%] left-1/2 -z-10 aspect-square w-[118%] -translate-x-1/2 rounded-full border"
-          initial={{ opacity: 0, scale: 0.82 }}
-          animate={ready ? { opacity: 1, scale: 1 } : undefined}
-          transition={{ duration: 2.2, ease: [0.16, 1, 0.3, 1], delay: 0.9 }}
-        />
-
         {/* Rim glow — separates a black suit from a black page. */}
         <div className="absolute inset-0 -z-10 translate-y-[8%] scale-[1.16] bg-[radial-gradient(ellipse_at_50%_44%,rgba(255,255,255,0.15),transparent_64%)] blur-2xl" />
 
@@ -64,10 +53,10 @@ export function Portrait() {
           alt="Mithilesh KS"
           fill
           priority
-          sizes="(max-width: 1024px) 78vw, 38vw"
+          sizes="(max-width: 1024px) 74vw, 40vw"
           /* Pushed well back on small screens, where he sits behind the type
              instead of beside it. */
-          className="object-contain object-bottom [filter:grayscale(1)_contrast(1.05)_brightness(0.34)] lg:[filter:grayscale(1)_contrast(1.1)_brightness(0.97)]"
+          className="object-contain object-bottom [filter:grayscale(1)_contrast(1.05)_brightness(0.46)] lg:[filter:grayscale(1)_contrast(1.1)_brightness(0.97)]"
           style={{
             maskImage:
               "linear-gradient(to bottom, #000 62%, rgba(0,0,0,0.4) 88%, transparent 100%)",
