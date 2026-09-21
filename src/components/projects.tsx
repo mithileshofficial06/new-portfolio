@@ -252,7 +252,7 @@ export function Projects() {
       <div className="mx-auto max-w-[1500px] px-6 md:px-10">
         <SectionHeading
           id="work"
-          index="02"
+          index="01"
           title="Selected work"
           aside="Six of thirty-six"
         />

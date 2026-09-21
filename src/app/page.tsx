@@ -18,8 +18,8 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
-        <About />
         <Projects />
+        <About />
         <VelocityMarquee />
         <Stack />
         <Contact />
