@@ -8,7 +8,6 @@ import { Preloader } from "@/components/preloader";
 import { Projects } from "@/components/projects";
 import { ScrollProgress, SmoothScroll } from "@/components/smooth-scroll";
 import { Stack } from "@/components/stack";
-import { Traveler } from "@/components/traveler";
 import { VelocityMarquee } from "@/components/velocity-marquee";
 import { Why } from "@/components/why";
 
@@ -19,8 +18,7 @@ export default function Home() {
       <ScrollProgress />
       <GlobalTexture />
       <Nav />
-      <main className="relative">
-        <Traveler />
+      <main>
         <Hero />
         <Projects />
         <About />
