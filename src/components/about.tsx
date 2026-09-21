@@ -191,7 +191,6 @@ export function About() {
           index="02"
           title="About"
           aside="Who is typing"
-          variant="serif"
         />
 
         <div className="mt-16 grid gap-14 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.85fr)] lg:gap-20">

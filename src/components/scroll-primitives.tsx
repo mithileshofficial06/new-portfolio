@@ -178,7 +178,7 @@ export function SectionHeading({
   title,
   aside,
   id,
-  variant = "rule",
+  variant = "outline",
 }: {
   index: string;
   title: string;

@@ -187,7 +187,6 @@ export function Stack() {
           index="03"
           title="Toolkit"
           aside="What I reach for"
-          variant="outline"
         />
         <StackGrid />
       </div>

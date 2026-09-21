@@ -161,7 +161,6 @@ export function Credentials() {
           index="04"
           title="Credentials"
           aside="Papers, podiums, hack nights"
-          variant="split"
         />
 
         <div className="mt-16 grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,2fr)] lg:gap-20">
