@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { NAV_LINKS, PROFILE } from "@/lib/content";
 
+import { CylinderWordmark } from "./cylinder-wordmark";
 import { useIntroReady } from "./intro-context";
 import { MobileMenu } from "./mobile-menu";
 
@@ -84,14 +85,14 @@ export function Nav() {
         }`}
       >
         {/* Wordmark set in the serif — the one voice in the page that isn't
-            grotesk or mono. Its M turns forever, so the mark is the logo. */}
+            grotesk or mono. Every letter rides its own drum and rolls
+            forever, the turn travelling left to right, so the mark is the
+            logo. Below sm only the M is left standing. */}
         <a
           href="#top"
           className="text-chalk font-serif text-xl leading-none tracking-[-0.01em] md:text-2xl"
         >
-          <span className="animate-quarter-turn inline-block">M</span>
-          <span className="hidden sm:inline">ithilesh KS</span>
-          <span className="sr-only sm:hidden">ithilesh KS</span>
+          <CylinderWordmark text={PROFILE.name} collapseAfter={0} />
         </a>
 
         <nav className="hidden items-center gap-9 md:flex">
