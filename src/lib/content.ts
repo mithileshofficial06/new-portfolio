@@ -34,11 +34,11 @@ export const NAV_LINKS = [
  * an orphan on every line.
  */
 export const ABOUT_STATEMENT =
-  "I build things that have to hold up when someone actually depends on them — triage systems, legal tooling, security scanners. Software where being wrong has a cost.";
+  "I can take a system from a blank repo to deployed and under real load. I'm most useful in the part in the middle — where correctness stops being obvious.";
 
 export const ABOUT_BODY = [
-  "I'm a computer science undergraduate at LICET, Chennai, working mostly in TypeScript and Python. Most of what I build sits in the same place: a real process that is tedious, error-prone and quietly failing people, and a machine that can do the tedious half while a human keeps the decision.",
-  "That shape shows up in the scholarship applications nobody has time to cross-check, and in the undertrial prisoners who are already entitled to release and stay in jail because nobody ran the arithmetic. I care about the part where the AI reads and the fixed rule decides — never the other way round.",
+  "I'm a computer science undergraduate at LICET, Chennai. I work across TypeScript, Python, Postgres and Solidity, and I'm comfortable anywhere in the stack — interface, API, queue, schema, contract. I'd rather own a system end to end than hold one layer of it well.",
+  "What I'm actually good at is the unglamorous middle: making a pipeline safe to run twice, keeping the logic that decides something small enough to test, and knowing which half of a problem a model should be nowhere near. I learn a domain before I model it.",
 ];
 
 export const STATS = [
