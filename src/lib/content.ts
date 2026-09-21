@@ -65,17 +65,6 @@ export type Project = {
 export const PROJECTS: Project[] = [
   {
     index: "01",
-    name: "ScholarShield",
-    tagline: "Scholarship fraud risk-triage for college committees",
-    description:
-      "An entity-resolution and contradiction-detection engine that reads scholarship applications, cross-references them against each other, and orders them for human review. Document forensics is a secondary signal. It flags review order — there is no code path by which the system approves, rejects or accuses anyone.",
-    stack: ["Next.js", "TypeScript", "Express", "BullMQ", "FastAPI", "PostgreSQL", "Redis"],
-    year: "2026",
-    kind: "Civic AI",
-    repo: "https://github.com/mithileshofficial06/scholar-shield",
-  },
-  {
-    index: "02",
     name: "JuriSync",
     tagline: "Finding undertrial prisoners the law already says are free",
     description:
@@ -85,6 +74,17 @@ export const PROJECTS: Project[] = [
     kind: "Legal tech",
     repo: "https://github.com/mithileshofficial06/Justify-Sync",
     live: "https://justify-sync.vercel.app",
+  },
+  {
+    index: "02",
+    name: "ScholarShield",
+    tagline: "Scholarship fraud risk-triage for college committees",
+    description:
+      "An entity-resolution and contradiction-detection engine that reads scholarship applications, cross-references them against each other, and orders them for human review. Document forensics is a secondary signal. It flags review order — there is no code path by which the system approves, rejects or accuses anyone.",
+    stack: ["Next.js", "TypeScript", "Express", "BullMQ", "FastAPI", "PostgreSQL", "Redis"],
+    year: "2026",
+    kind: "Civic AI",
+    repo: "https://github.com/mithileshofficial06/scholar-shield",
   },
   {
     index: "03",
@@ -100,6 +100,18 @@ export const PROJECTS: Project[] = [
   },
   {
     index: "04",
+    name: "VaxiTrack",
+    tagline: "Immunization tracking that calls the parents a clinic would lose",
+    description:
+      "India's Universal Immunization Programme puts twenty-eight vaccines in a child's first years, and the doses that get missed are missed by the families nobody has time to chase. VaxiTrack generates the full schedule per child, marks what falls past due, and runs the follow-up itself — a daily job placing Twilio voice calls in Indian English and SMS, each message written for that parent. Health workers scan a QR at the centre to record what was actually given.",
+    stack: ["Next.js 15", "React 19", "FastAPI", "MongoDB", "Twilio", "Gemini 2.0 Flash", "APScheduler"],
+    year: "2026",
+    kind: "Public health",
+    repo: "https://github.com/mithileshofficial06/VaxiTrack",
+    accolade: "Top 10 · Ctrl+Alt+Hack",
+  },
+  {
+    index: "05",
     name: "InboxIQ",
     tagline: "Gmail analytics with a retrieval layer over your own mail",
     description:
@@ -111,7 +123,7 @@ export const PROJECTS: Project[] = [
     live: "https://inbox-iq-frontend-three.vercel.app",
   },
   {
-    index: "05",
+    index: "06",
     name: "CodeMap",
     tagline: "See the architecture of any codebase, instantly",
     description:
@@ -121,17 +133,6 @@ export const PROJECTS: Project[] = [
     kind: "Developer tool",
     repo: "https://github.com/mithileshofficial06/codemap",
     live: "https://codebase-api.vercel.app",
-  },
-  {
-    index: "06",
-    name: "ECHO",
-    tagline: "A browser arcade game about surviving your own past",
-    description:
-      "Every loop lasts ten seconds, then replays as a ghost alongside every loop before it. Collect orbs, avoid your past selves, and the soundtrack builds itself — a loop is exactly four bars at 96 BPM, and each living echo adds a layer to the track. Deterministic simulation, seeded RNG, server-verified leaderboard, and about 16 KB of JavaScript.",
-    stack: ["TypeScript", "Canvas 2D", "WebAudio", "Vite", "Supabase"],
-    year: "2026",
-    kind: "Game",
-    repo: "https://github.com/mithileshofficial06/echo",
   },
 ];
 
