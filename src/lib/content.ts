@@ -136,6 +136,46 @@ export const PROJECTS: Project[] = [
   },
 ];
 
+/** The short case, six panels of it. */
+export const WHY = [
+  {
+    index: "01",
+    title: "A security lens, always on",
+    short: "Security lens",
+    body: "I read my own code the way someone attacking it would. Google's cybersecurity certificate, Burp and ZAP in the toolchain, and a CLI scanner I wrote myself — the habit came before any job asked for it.",
+  },
+  {
+    index: "02",
+    title: "Tested outside the classroom",
+    short: "Proven in public",
+    body: "Hackathon rooms at IIT Madras, a live demo at the U.S. Consulate in Chennai, a sponsored track at ETHOnline. The work has been judged by people with no reason to be kind about it.",
+  },
+  {
+    index: "03",
+    title: "No handoffs",
+    short: "No handoffs",
+    body: "Interface, API, queue, schema, contract — I carry a build across all of them. Three of the six projects on this page are deployed and hold a public URL, not a screenshot.",
+  },
+  {
+    index: "04",
+    title: "New tools don't slow me down",
+    short: "Fast ramp",
+    body: "Snap's Lens Studio and AR from a standing start to a demo stage. Solidity and an on-chain instruction set for ETHOnline. The ramp is the job, not an obstacle before it.",
+  },
+  {
+    index: "05",
+    title: "Builds well with strangers",
+    short: "Collaboration",
+    body: "A hackathon is three days with people you met at the door. I say what I'm taking early, pick up the unglamorous half, and make sure nobody is waiting on me.",
+  },
+  {
+    index: "06",
+    title: "Design is part of the build",
+    short: "Design",
+    body: "How a thing looks is how it gets judged, long before anyone reads the source. I would rather spend the extra hour on the interface than explain why it was optional.",
+  },
+];
+
 export const STACK_GROUPS = [
   {
     title: "Languages",
