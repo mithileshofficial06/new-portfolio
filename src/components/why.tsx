@@ -121,6 +121,77 @@ function PanelBody({ item }: { item: (typeof WHY)[number] }) {
 }
 
 /**
+ * The open panel's right-hand field.
+ *
+ * The copy column is pinned to a fixed width so it cannot rewrap mid-slide,
+ * which leaves everything right of it empty once the panel is at full stretch.
+ * This fills that ground without competing with the text: rings, a drifting
+ * bloom, the panel's own number cut as an outline, and the short label stood
+ * on end along the edge — all of it faint, and none of it clickable.
+ */
+function PanelField({ item }: { item: (typeof WHY)[number] }) {
+  return (
+    <motion.div
+      aria-hidden
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.2 } }}
+      transition={{ duration: 1, ease: EASE, delay: 0.22 }}
+      className="pointer-events-none absolute inset-y-0 right-0 left-[min(30vw,27rem)] overflow-hidden"
+    >
+      {/* Bloom, drifting on the long loop the atmosphere uses. */}
+      <span className="absolute top-1/4 -right-24 size-[28rem] animate-[drift_22s_ease-in-out_infinite] rounded-full bg-[radial-gradient(circle,rgba(250,250,250,0.07),transparent_68%)]" />
+
+      {/* Rings, hung off the top corner and clipped by the panel. */}
+      <motion.span
+        initial={{ scale: 0.82, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1.4, ease: EASE, delay: 0.3 }}
+        className="border-line absolute -top-28 -right-24 size-[27rem] rounded-full border"
+      />
+      <motion.span
+        initial={{ scale: 0.82, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1.4, ease: EASE, delay: 0.38 }}
+        className="border-line/60 absolute -top-14 -right-10 size-[17rem] rounded-full border"
+      />
+
+      {/* A tick per claim, filled up to this one. */}
+      <div className="absolute top-10 right-10 flex flex-col items-end gap-2">
+        {WHY.map((tick) => (
+          <span
+            key={tick.index}
+            className={`h-px transition-all duration-700 ${
+              tick.index === item.index ? "bg-ash w-9" : "bg-line w-4"
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* The short label stood on end, hard against the edge. */}
+      <motion.span
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, ease: EASE, delay: 0.42 }}
+        className="text-ash/45 absolute right-4 bottom-10 [writing-mode:vertical-rl] rotate-180 font-mono text-[10px] tracking-[0.34em] uppercase"
+      >
+        {item.short}
+      </motion.span>
+
+      {/* The panel's own number, cut as an outline and left to hang. */}
+      <motion.span
+        initial={{ opacity: 0, y: 28 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, ease: EASE, delay: 0.34 }}
+        className="font-display absolute right-12 -bottom-4 text-[clamp(8rem,13vw,14rem)] leading-[0.72] tracking-[-0.06em] text-transparent opacity-30 select-none [-webkit-text-stroke:1px_var(--color-line)]"
+      >
+        {item.index}
+      </motion.span>
+    </motion.div>
+  );
+}
+
+/**
  * Six panels stood on end. The open one squeezes the rest to their spines, so
  * the section reads as a single object that redistributes rather than six
  * cards competing for attention.
@@ -196,6 +267,10 @@ function Panels() {
               }`}
             >
               <span aria-hidden className="grid-veil absolute inset-0 opacity-30" />
+
+              <AnimatePresence>
+                {isOpen && <PanelField key={`field-${item.index}`} item={item} />}
+              </AnimatePresence>
 
               {/* Light pooled in the corner of whichever panel is open. */}
               <span
