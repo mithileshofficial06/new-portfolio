@@ -135,55 +135,6 @@ export const PROJECTS: Project[] = [
   },
 ];
 
-/** Everything else worth a line, including the older award-winning work. */
-export const ARCHIVE = [
-  {
-    name: "VaxiTrack",
-    note: "AI child immunization tracking with Twilio voice reminders",
-    year: "2026",
-    accolade: "Top 10 · Ctrl+Alt+Hack",
-    repo: "https://github.com/mithileshofficial06/VaxiTrack",
-  },
-  {
-    name: "NaviLens AR",
-    note: "Augmented reality city discovery",
-    year: "2026",
-    accolade: "U.S. Consulate × Snap",
-    repo: "https://github.com/mithileshofficial06/NaviLens",
-  },
-  {
-    name: "Sayso",
-    note: "Plain-English payroll as a self-halting onchain payment",
-    year: "2026",
-    accolade: "KeeperHub Agents Onchain",
-    repo: "https://github.com/mithileshofficial06/sayso",
-  },
-  {
-    name: "GraphOne",
-    note: "Intelligence layer tracking AI companies, funding and investors",
-    year: "2026",
-    repo: "https://github.com/mithileshofficial06/graphone",
-  },
-  {
-    name: "EduGenie",
-    note: "Monitors Moodle, generates study material, delivers over email and WhatsApp",
-    year: "2026",
-    repo: "https://github.com/mithileshofficial06/edugenie",
-  },
-  {
-    name: "Kalyana Konnection",
-    note: "Role-based food surplus redistribution between events and NGOs",
-    year: "2026",
-    repo: "https://github.com/mithileshofficial06/KalyanaKonnection",
-  },
-  {
-    name: "AISA",
-    note: "CLI security analyst — recon, scanning and AI-written PDF reports",
-    year: "2025",
-    repo: "https://github.com/mithileshofficial06/AI-Security-Analyst-CLI-",
-  },
-];
-
 export const STACK_GROUPS = [
   {
     title: "Languages",

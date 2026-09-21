@@ -1,5 +1,4 @@
 import { About } from "@/components/about";
-import { Archive } from "@/components/archive";
 import { Contact } from "@/components/contact";
 import { GlobalTexture } from "@/components/global-texture";
 import { Hero } from "@/components/hero";
@@ -21,7 +20,6 @@ export default function Home() {
         <Hero />
         <About />
         <Projects />
-        <Archive />
         <VelocityMarquee />
         <Stack />
         <Contact />
