@@ -35,6 +35,13 @@ const USED_IN = PROJECTS.reduce<Record<string, string[]>>((map, project) => {
 const ALL = STACK_GROUPS.flatMap((group) => group.items);
 const DAILY = ALL.filter((item) => item.level === 3).length;
 
+/** How much of the toolkit each build actually draws on, heaviest first. */
+const LISTED = new Set(ALL.map((item) => bare(item.name)));
+const PER_BUILD = PROJECTS.map((project) => ({
+  name: project.name,
+  count: project.stack.filter((tool) => LISTED.has(bare(tool))).length,
+})).sort((a, b) => b.count - a.count);
+
 /** Three segments, filled to the level. The only quantity in the section. */
 function Meter({ level }: { level: number }) {
   return (
@@ -86,7 +93,7 @@ function Credit({ item }: { item: StackItem }) {
   const usedIn = USED_IN[bare(item.name)] ?? [];
 
   return (
-    <div className="group mx-auto grid max-w-4xl grid-cols-[1fr_1.2fr] items-start gap-x-5 md:gap-x-10">
+    <div className="group grid grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] items-start gap-x-5 md:gap-x-8">
       <div className="flex items-center justify-end gap-2.5 pt-px">
         <h3 className="font-display text-ash group-hover:text-chalk text-right text-base leading-none tracking-[-0.03em] uppercase transition-colors duration-300 md:text-xl">
           {item.name}
@@ -128,8 +135,8 @@ function Reel({ duplicate = false }: { duplicate?: boolean }) {
       className={duplicate ? "credits-dupe" : undefined}
     >
       {STACK_GROUPS.map((group) => (
-        <div key={group.title} className="px-6">
-          <div className="mx-auto flex max-w-lg items-center gap-4 py-9">
+        <div key={group.title}>
+          <div className="mx-auto flex max-w-sm items-center gap-4 py-8">
             <span className="bg-line h-px flex-1" />
             <p className="label whitespace-nowrap">{group.title}</p>
             <span className="bg-line h-px flex-1" />
@@ -144,12 +151,100 @@ function Reel({ duplicate = false }: { duplicate?: boolean }) {
       ))}
 
       {/* The slate the roll ends on before it comes round again. */}
-      <div className="flex flex-col items-center gap-4 px-6 py-20">
+      <div className="flex flex-col items-center gap-4 py-20">
         <span className="bg-line h-12 w-px" />
         <p className="label">End of list</p>
         <span className="bg-line h-12 w-px" />
       </div>
     </div>
+  );
+}
+
+const pad = (n: number) => String(n).padStart(2, "0");
+
+/**
+ * The roll shows a three-segment meter against every tool without ever
+ * saying what the segments mean, and a moving list is the wrong place to
+ * explain it. The panel is where the notation, the totals and the shape of
+ * the list stay still enough to read.
+ */
+function Panel() {
+  const widest = Math.max(...STACK_GROUPS.map((group) => group.items.length));
+  const learning = ALL.filter((item) => item.level === 1).length;
+
+  return (
+    <aside className="border-line flex flex-col gap-11 lg:border-l lg:pl-12">
+      <div>
+        <div className="flex items-center gap-2.5">
+          <span className="bg-chalk size-1.5 shrink-0 rounded-full" />
+          <p className="label">Reel 03 · Toolkit</p>
+        </div>
+
+        <p className="text-smoke mt-5 max-w-[36ch] text-[13px] leading-[1.8]">
+          Every entry carries the level I would actually claim in a room, not
+          the one that reads best — {learning} of the {ALL.length} are still
+          marked as learning, and the reel says so on the way past.
+        </p>
+      </div>
+
+      <div>
+        <p className="label">Reading the meter</p>
+        <ul className="mt-5 flex flex-col gap-3.5">
+          {([3, 2, 1] as const).map((level) => (
+            <li key={level} className="flex items-center gap-3">
+              <Meter level={level} />
+              <span className="text-smoke flex-1 font-mono text-[10px] tracking-[0.14em] uppercase">
+                {STACK_LEVELS[level]}
+              </span>
+              <span className="text-ash font-mono text-[10px] tabular-nums">
+                {pad(ALL.filter((item) => item.level === level).length)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <p className="label">By group</p>
+        <ul className="mt-5 flex flex-col gap-3.5">
+          {STACK_GROUPS.map((group) => (
+            <li key={group.title} className="flex items-center gap-3">
+              <span className="text-ash w-[6.5rem] shrink-0 truncate font-mono text-[10px] tracking-[0.1em] uppercase">
+                {group.title}
+              </span>
+              <span className="bg-line h-[3px] flex-1 overflow-hidden rounded-full">
+                <span
+                  className="bg-ash block h-full rounded-full"
+                  style={{
+                    width: `${(group.items.length / widest) * 100}%`,
+                  }}
+                />
+              </span>
+              <span className="text-smoke font-mono text-[10px] tabular-nums">
+                {pad(group.items.length)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <p className="label">Drawn on per build</p>
+        <ul className="mt-5 flex flex-col gap-3">
+          {PER_BUILD.map((project) => (
+            <li key={project.name} className="flex items-baseline gap-3">
+              <span className="text-smoke shrink-0 font-mono text-[10px] tracking-[0.1em] uppercase">
+                {project.name}
+              </span>
+              <span className="bg-line h-px flex-1" />
+              <span className="text-ash shrink-0 font-mono text-[10px] tabular-nums">
+                {pad(project.count)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
   );
 }
 
@@ -167,14 +262,16 @@ export function Stack() {
         <p className="label mt-8">
           {ALL.length} tools · {DAILY} in daily rotation
         </p>
-      </div>
 
-      {/* Full bleed: the roll is its own frame, and page gutters either side
-          of it would read as a box rather than a window. */}
-      <div className="credits-window relative mt-12 h-[30rem] overflow-hidden md:mt-16 md:h-[38rem]">
-        <div className="animate-credits">
-          <Reel />
-          <Reel duplicate />
+        <div className="mt-12 grid gap-12 md:mt-16 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-14 xl:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className="credits-window relative h-[30rem] overflow-hidden md:h-[38rem]">
+            <div className="animate-credits">
+              <Reel />
+              <Reel duplicate />
+            </div>
+          </div>
+
+          <Panel />
         </div>
       </div>
     </section>
