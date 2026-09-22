@@ -60,14 +60,25 @@ function Meter({ level }: { level: number }) {
 
 /**
  * The monogram is drawn inside the same 24x24 box as the brand paths, so a
- * tool without a mark scales identically off one `className`.
+ * tool without a mark draws identically.
+ *
+ * Sized by attribute rather than a utility class: an inline SVG carrying only
+ * a viewBox expands to its container's full width the moment its CSS is
+ * missing, which during development turns a 14px mark into a page-wide one.
+ * The attributes are the floor; CSS still wins if it ever needs to.
  */
 function Mark({ name, className }: { name: string; className: string }) {
   const path = TECH_ICONS[name];
   const monogram = MONOGRAMS[name] ?? name.slice(0, 2).toUpperCase();
 
   return (
-    <svg viewBox="0 0 24 24" aria-hidden className={className}>
+    <svg
+      width={15}
+      height={15}
+      viewBox="0 0 24 24"
+      aria-hidden
+      className={className}
+    >
       {path ? (
         <path d={path} fill="currentColor" />
       ) : (
@@ -93,14 +104,14 @@ function Credit({ item }: { item: StackItem }) {
   const usedIn = USED_IN[bare(item.name)] ?? [];
 
   return (
-    <div className="group grid grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] items-start gap-x-5 md:gap-x-8">
+    <div className="group mx-auto grid max-w-[44rem] grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] items-start gap-x-5 md:gap-x-8">
       <div className="flex items-center justify-end gap-2.5 pt-px">
         <h3 className="font-display text-ash group-hover:text-chalk text-right text-base leading-none tracking-[-0.03em] uppercase transition-colors duration-300 md:text-xl">
           {item.name}
         </h3>
         <Mark
           name={item.name}
-          className="text-ash/60 group-hover:text-chalk size-3.5 shrink-0 transition-colors duration-300 md:size-4"
+          className="text-ash/75 group-hover:text-chalk shrink-0 transition-colors duration-300"
         />
       </div>
 
@@ -264,7 +275,7 @@ export function Stack() {
         </p>
 
         <div className="mt-12 grid gap-12 md:mt-16 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-14 xl:grid-cols-[minmax(0,1fr)_22rem]">
-          <div className="credits-window relative h-[30rem] overflow-hidden md:h-[38rem]">
+          <div className="credits-window relative h-[30rem] overflow-hidden md:h-[40rem]">
             <div className="animate-credits">
               <Reel />
               <Reel duplicate />
