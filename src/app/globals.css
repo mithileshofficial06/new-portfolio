@@ -130,6 +130,14 @@ body {
   100% { transform: translateY(1100%); }
 }
 
+/* End-credits roll. The reel holds the list twice over and travels exactly
+   one copy, so the seam lands where the second copy's first row sits on top
+   of where the first one started — the loop has no visible join. */
+@keyframes credits {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, -50%, 0); }
+}
+
 /* Quarter turn, then a beat of rest, four times round.
    Each step is 0.45s of travel + 1s held = 1.45s; 4 steps = 5.8s.
    The percentages are those seconds over the 5.8s total. */
@@ -198,8 +206,28 @@ body {
 .animate-marquee { animation: marquee 42s linear infinite; }
 .animate-pulse-ring { animation: pulse-ring 2.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
 .animate-scan { animation: scan 7s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+.animate-credits { animation: credits 60s linear infinite; will-change: transform; }
 
 .pause-on-hover:hover .animate-marquee { animation-play-state: paused; }
+
+/* The window the reel travels through, faded at both ends so rows arrive and
+   leave rather than being cut off by a hard edge. */
+.credits-window {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 14%,
+    #000 86%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 14%,
+    #000 86%,
+    transparent 100%
+  );
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -209,7 +237,20 @@ body {
   .animate-drift,
   .animate-marquee,
   .animate-pulse-ring,
-  .animate-scan {
+  .animate-scan,
+  .animate-credits {
     animation: none !important;
+  }
+
+  /* Nothing is rolling, so the window would freeze on whichever rows it
+     happened to frame. It opens to the full list instead, and the second
+     copy of the reel — which only exists to hide the loop's seam — goes. */
+  .credits-window {
+    height: auto !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+  .credits-dupe {
+    display: none !important;
   }
 }

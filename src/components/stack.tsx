@@ -1,12 +1,12 @@
-"use client";
-
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useState } from "react";
-
-import { STACK_GROUPS } from "@/lib/content";
+import {
+  PROJECTS,
+  STACK_GROUPS,
+  STACK_LEVELS,
+  type StackItem,
+} from "@/lib/content";
 import { TECH_ICONS } from "@/lib/tech-icons";
 
-import { DrawLine, EASE, Reveal, SectionHeading } from "./scroll-primitives";
+import { SectionHeading } from "./scroll-primitives";
 
 /** Tools with no official mark of their own wear their initials instead. */
 const MONOGRAMS: Record<string, string> = {
@@ -17,162 +17,137 @@ const MONOGRAMS: Record<string, string> = {
   Subfinder: "SF",
 };
 
-type Active = { name: string; group: string } | null;
+/**
+ * Project stacks name the version they shipped against ("Next.js 16"); the
+ * toolkit names the tool. Dropping a trailing version is what lets the two
+ * lists meet without maintaining a third one by hand.
+ */
+const bare = (value: string) =>
+  value.toLowerCase().replace(/\s+v?[\d.]+$/, "").trim();
 
-function Tile({
-  name,
-  group,
-  order,
-  active,
-  onActivate,
-}: {
-  name: string;
-  group: string;
-  order: number;
-  active: Active;
-  onActivate: (value: Active) => void;
-}) {
-  const reduceMotion = useReducedMotion();
-  const path = TECH_ICONS[name];
-  const isActive = active?.name === name;
-  const isMuted = active !== null && !isActive;
+const USED_IN = PROJECTS.reduce<Record<string, string[]>>((map, project) => {
+  for (const tool of project.stack) {
+    (map[bare(tool)] ??= []).push(project.name);
+  }
+  return map;
+}, {});
 
+const ALL = STACK_GROUPS.flatMap((group) => group.items);
+const DAILY = ALL.filter((item) => item.level === 3).length;
+
+/** Three segments, filled to the level. The only quantity in the section. */
+function Meter({ level }: { level: number }) {
   return (
-    <motion.li
-      initial={reduceMotion ? false : { opacity: 0, scale: 0.85, y: 14 }}
-      whileInView={{ opacity: 1, scale: 1, y: 0 }}
-      viewport={{ once: true, margin: "-10% 0px" }}
-      transition={{ duration: 0.55, ease: EASE, delay: Math.min(order * 0.03, 0.4) }}
-      onPointerEnter={() => onActivate({ name, group })}
-      onPointerLeave={() => onActivate(null)}
-      className={`relative ${isActive ? "z-10" : ""}`}
-    >
-      <motion.div
-        title={name}
-        className="border-line bg-coal relative flex size-16 items-center justify-center rounded-2xl border md:size-[4.5rem]"
-        animate={
-          reduceMotion
-            ? undefined
-            : {
-                opacity: isMuted ? 0.36 : 1,
-                y: isActive ? -8 : 0,
-                borderColor: isActive ? "#77777f" : "#1e1e21",
-              }
-        }
-        transition={
-          isActive
-            ? { type: "spring", stiffness: 420, damping: 18, mass: 0.6 }
-            : { duration: 0.45, ease: EASE }
-        }
-      >
-        {/* Glow that blooms behind the tile while it holds the readout. */}
+    <span aria-hidden className="flex shrink-0 items-center gap-[3px]">
+      {[1, 2, 3].map((step) => (
         <span
-          aria-hidden
-          className={`absolute -inset-2 -z-10 rounded-[1.4rem] bg-[radial-gradient(circle_at_center,rgba(250,250,250,0.14),transparent_70%)] transition-opacity duration-500 ${
-            isActive ? "opacity-100" : "opacity-0"
+          key={step}
+          className={`h-2.5 w-[3px] rounded-full ${
+            step > level ? "bg-line" : "bg-ash"
           }`}
         />
-
-        {path ? (
-          <svg
-            viewBox="0 0 24 24"
-            aria-hidden
-            className={`size-7 transition-[color,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] md:size-8 ${
-              isActive ? "text-chalk scale-[1.18]" : "text-smoke scale-100"
-            }`}
-          >
-            <path d={path} fill="currentColor" />
-          </svg>
-        ) : (
-          <span
-            aria-hidden
-            className={`font-mono text-xs tracking-[0.1em] transition-[color,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              isActive ? "text-chalk scale-[1.18]" : "text-smoke scale-100"
-            }`}
-          >
-            {MONOGRAMS[name] ?? name.slice(0, 2).toUpperCase()}
-          </span>
-        )}
-
-        <span className="sr-only">{name}</span>
-      </motion.div>
-
-      {/* The name rides under the tile it belongs to, rather than in a readout
-          somewhere else on the page. Absolute, so it never reflows the row. */}
-      <AnimatePresence>
-        {isActive && (
-          <motion.span
-            initial={reduceMotion ? false : { opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduceMotion ? undefined : { opacity: 0, y: -6 }}
-            transition={{ duration: 0.28, ease: EASE }}
-            className="bg-chalk text-void pointer-events-none absolute top-full left-1/2 z-20 mt-2 -translate-x-1/2 rounded-full px-3 py-1.5 font-mono text-[10px] tracking-[0.16em] whitespace-nowrap uppercase"
-          >
-            {name}
-          </motion.span>
-        )}
-      </AnimatePresence>
-    </motion.li>
+      ))}
+    </span>
   );
 }
 
-function StackGrid() {
-  const [active, setActive] = useState<Active>(null);
-  const total = STACK_GROUPS.reduce((sum, g) => sum + g.items.length, 0);
-
-  // Stagger runs across the whole grid rather than restarting per group, so
-  // the tiles arrive as one wave instead of five.
-  let tile = 0;
+/**
+ * The monogram is drawn inside the same 24x24 box as the brand paths, so a
+ * tool without a mark scales identically off one `className`.
+ */
+function Mark({ name, className }: { name: string; className: string }) {
+  const path = TECH_ICONS[name];
+  const monogram = MONOGRAMS[name] ?? name.slice(0, 2).toUpperCase();
 
   return (
-    <div className="mt-16" onPointerLeave={() => setActive(null)}>
-      {/* The tile names the tool; this line names the family it belongs to. */}
-      <div className="border-line flex items-baseline justify-between gap-6 border-b pb-4">
-        <p className="label">Across five groups</p>
+    <svg viewBox="0 0 24 24" aria-hidden className={className}>
+      {path ? (
+        <path d={path} fill="currentColor" />
+      ) : (
+        <text
+          x="12"
+          y="12.6"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fill="currentColor"
+          fontFamily="var(--font-mono)"
+          fontSize={monogram.length > 2 ? 7.4 : 10}
+          letterSpacing="0.3"
+        >
+          {monogram}
+        </text>
+      )}
+    </svg>
+  );
+}
 
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.p
-            key={active?.group ?? "idle"}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3, ease: EASE }}
-            className="font-display text-chalk text-right text-xl leading-none tracking-[-0.03em] uppercase md:text-2xl"
-          >
-            {active ? active.group : `${total} tools`}
-          </motion.p>
-        </AnimatePresence>
+/** One credit: the tool on the left of the gutter, its billing on the right. */
+function Credit({ item }: { item: StackItem }) {
+  const usedIn = USED_IN[bare(item.name)] ?? [];
+
+  return (
+    <div className="group mx-auto grid max-w-4xl grid-cols-[1fr_1.2fr] items-start gap-x-5 md:gap-x-10">
+      <div className="flex items-center justify-end gap-2.5 pt-px">
+        <h3 className="font-display text-ash group-hover:text-chalk text-right text-base leading-none tracking-[-0.03em] uppercase transition-colors duration-300 md:text-xl">
+          {item.name}
+        </h3>
+        <Mark
+          name={item.name}
+          className="text-ash/60 group-hover:text-chalk size-3.5 shrink-0 transition-colors duration-300 md:size-4"
+        />
       </div>
 
-      {/* One full-width row per group: the tiles are a fixed pitch, so any
-          column split leaves dead cells at the end of the short groups. */}
-      <div className="mt-12 flex flex-col gap-11">
-        {STACK_GROUPS.map((group) => (
-          <div key={group.title}>
-            <div className="flex items-center gap-4">
-              <Reveal>
-                <p className="label whitespace-nowrap">{group.title}</p>
-              </Reveal>
-              <DrawLine />
-              <span className="label tabular-nums">
-                {String(group.items.length).padStart(2, "0")}
-              </span>
-            </div>
+      <div>
+        <div className="flex items-center gap-2.5">
+          <Meter level={item.level} />
+          <span className="label">{STACK_LEVELS[item.level]}</span>
+        </div>
 
-            <ul className="mt-6 flex flex-wrap gap-3">
-              {group.items.map((item) => (
-                <Tile
-                  key={item}
-                  name={item}
-                  group={group.title}
-                  order={tile++}
-                  active={active}
-                  onActivate={setActive}
-                />
-              ))}
-            </ul>
+        <p className="text-smoke mt-1.5 max-w-[40ch] text-[12px] leading-[1.65] md:text-[13px]">
+          {item.note}
+        </p>
+
+        {usedIn.length > 0 && (
+          <p className="text-ash/65 mt-1.5 font-mono text-[9px] tracking-[0.14em] uppercase md:text-[10px]">
+            {usedIn.join(" · ")}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * One pass of the list. Rendered twice inside the reel — the second copy is
+ * decorative, there only so the roll has somewhere to go before it wraps.
+ */
+function Reel({ duplicate = false }: { duplicate?: boolean }) {
+  return (
+    <div
+      aria-hidden={duplicate || undefined}
+      className={duplicate ? "credits-dupe" : undefined}
+    >
+      {STACK_GROUPS.map((group) => (
+        <div key={group.title} className="px-6">
+          <div className="mx-auto flex max-w-lg items-center gap-4 py-9">
+            <span className="bg-line h-px flex-1" />
+            <p className="label whitespace-nowrap">{group.title}</p>
+            <span className="bg-line h-px flex-1" />
           </div>
-        ))}
+
+          <div className="flex flex-col gap-7">
+            {group.items.map((item) => (
+              <Credit key={item.name} item={item} />
+            ))}
+          </div>
+        </div>
+      ))}
+
+      {/* The slate the roll ends on before it comes round again. */}
+      <div className="flex flex-col items-center gap-4 px-6 py-20">
+        <span className="bg-line h-12 w-px" />
+        <p className="label">End of list</p>
+        <span className="bg-line h-12 w-px" />
       </div>
     </div>
   );
@@ -188,7 +163,19 @@ export function Stack() {
           title="Toolkit"
           aside="What I reach for"
         />
-        <StackGrid />
+
+        <p className="label mt-8">
+          {ALL.length} tools · {DAILY} in daily rotation
+        </p>
+      </div>
+
+      {/* Full bleed: the roll is its own frame, and page gutters either side
+          of it would read as a box rather than a window. */}
+      <div className="credits-window relative mt-12 h-[30rem] overflow-hidden md:mt-16 md:h-[38rem]">
+        <div className="animate-credits">
+          <Reel />
+          <Reel duplicate />
+        </div>
       </div>
     </section>
   );

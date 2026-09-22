@@ -198,26 +198,217 @@ export const WHY: {
   },
 ];
 
-export const STACK_GROUPS = [
+/** 1 — learning · 2 — comfortable · 3 — daily driver. */
+export type StackLevel = 1 | 2 | 3;
+
+export const STACK_LEVELS: Record<StackLevel, string> = {
+  1: "Learning",
+  2: "Comfortable",
+  3: "Daily driver",
+};
+
+export type StackItem = {
+  name: string;
+  level: StackLevel;
+  /** What the tool is actually for here — not what its homepage says. */
+  note: string;
+};
+
+export const STACK_GROUPS: { title: string; items: StackItem[] }[] = [
   {
     title: "Languages",
-    items: ["TypeScript", "Python", "JavaScript", "Java", "SQL", "Solidity"],
+    items: [
+      {
+        name: "TypeScript",
+        level: 3,
+        note: "The default. Strict mode on, and the types doing real work at the boundaries rather than decorating them.",
+      },
+      {
+        name: "Python",
+        level: 3,
+        note: "Where the data work and the model-adjacent half of a build lives — services, scrapers, scoring.",
+      },
+      {
+        name: "JavaScript",
+        level: 3,
+        note: "Underneath the TypeScript, and whatever a browser console hands me at two in the morning.",
+      },
+      {
+        name: "Java",
+        level: 1,
+        note: "Coursework and data structures. Enough to read someone else's service without flinching.",
+      },
+      {
+        name: "SQL",
+        level: 3,
+        note: "Written by hand before it is written by an ORM. Index it, then read the query plan.",
+      },
+      {
+        name: "Solidity",
+        level: 2,
+        note: "Learned mid-build for ETHOnline and shipped: Zyro is a live instruction on 1inch's SwapVM.",
+      },
+    ],
   },
   {
     title: "Frontend",
-    items: ["Next.js", "React", "Tailwind CSS", "Motion", "GSAP", "D3.js", "HTML / CSS"],
+    items: [
+      {
+        name: "Next.js",
+        level: 3,
+        note: "App Router and server components. Four of the six builds on this page are Next apps.",
+      },
+      {
+        name: "React",
+        level: 3,
+        note: "State kept where it belongs and as little of it as the interface can get away with.",
+      },
+      {
+        name: "Tailwind CSS",
+        level: 3,
+        note: "Tokens in the theme, none loose in the markup. Every surface on this site is Tailwind.",
+      },
+      {
+        name: "Motion",
+        level: 3,
+        note: "The motion on this page — entrances, exits, and the reduced-motion path that skips both.",
+      },
+      {
+        name: "GSAP",
+        level: 2,
+        note: "Timelines for sequences long enough that hand-written keyframes stop being readable.",
+      },
+      {
+        name: "D3.js",
+        level: 2,
+        note: "Scales and force layouts. CodeMap draws a repository's dependency graph with it.",
+      },
+      {
+        name: "HTML / CSS",
+        level: 3,
+        note: "Semantics first, then grid, container queries and the cascade instead of a workaround.",
+      },
+    ],
   },
   {
     title: "Backend & data",
-    items: ["Node.js", "Express", "FastAPI", "Flask", "PostgreSQL", "MongoDB", "Prisma", "Redis", "BullMQ"],
+    items: [
+      {
+        name: "Node.js",
+        level: 3,
+        note: "The runtime under most of what I ship — APIs, background workers and build tooling alike.",
+      },
+      {
+        name: "Express",
+        level: 3,
+        note: "A thin routing layer over the real work. Three of the builds here run one.",
+      },
+      {
+        name: "FastAPI",
+        level: 3,
+        note: "Python services with typed request models, and Pydantic rejecting bad input at the door.",
+      },
+      {
+        name: "Flask",
+        level: 2,
+        note: "The smaller jobs — one endpoint, or a script that turned out to need a port.",
+      },
+      {
+        name: "PostgreSQL",
+        level: 3,
+        note: "Relational by default. Constraints live in the schema, not in the application code.",
+      },
+      {
+        name: "MongoDB",
+        level: 2,
+        note: "For shapes still moving. VaxiTrack's per-child immunization schedules sit in it.",
+      },
+      {
+        name: "Prisma",
+        level: 2,
+        note: "Migrations that read like a diff, and a client that keeps the schema and the types honest.",
+      },
+      {
+        name: "Redis",
+        level: 2,
+        note: "Queue backing, cache and rate limits — the layer everything else waits on, so it stays small.",
+      },
+      {
+        name: "BullMQ",
+        level: 2,
+        note: "Background jobs that survive a restart and are safe to run twice. ScholarShield and InboxIQ both lean on it.",
+      },
+    ],
   },
   {
     title: "Security",
-    items: ["Burp Suite", "Nmap", "Wireshark", "OWASP ZAP", "Nuclei", "Subfinder"],
+    items: [
+      {
+        name: "Burp Suite",
+        level: 2,
+        note: "Intercept, repeat, and prove the endpoint trusts the client far more than it should.",
+      },
+      {
+        name: "Nmap",
+        level: 2,
+        note: "First look at an unfamiliar host — what is open, what answers, and what lies about its version.",
+      },
+      {
+        name: "Wireshark",
+        level: 1,
+        note: "When two logs disagree about what was sent, the wire settles it.",
+      },
+      {
+        name: "OWASP ZAP",
+        level: 2,
+        note: "A passive scan in the loop before anything of mine goes somewhere public.",
+      },
+      {
+        name: "Nuclei",
+        level: 2,
+        note: "Templated checks across a whole scope, so the same probe never gets written twice.",
+      },
+      {
+        name: "Subfinder",
+        level: 2,
+        note: "Mapping the surface before testing any of it — everything else the domain quietly answers on.",
+      },
+    ],
   },
   {
     title: "Tooling",
-    items: ["Git", "GitHub", "Linux", "Vercel", "Supabase", "Turborepo"],
+    items: [
+      {
+        name: "Git",
+        level: 3,
+        note: "Small commits with a message that says why. Rebase, so the history reads forwards.",
+      },
+      {
+        name: "GitHub",
+        level: 3,
+        note: "Thirty-six public repositories, Actions doing CI, and issues doing the project management.",
+      },
+      {
+        name: "Linux",
+        level: 3,
+        note: "Daily driver. Comfortable on a box with a shell and no desktop to fall back on.",
+      },
+      {
+        name: "Vercel",
+        level: 3,
+        note: "A preview per branch, and three of the projects here holding a public URL because of it.",
+      },
+      {
+        name: "Supabase",
+        level: 2,
+        note: "Postgres with auth and storage already attached. JuriSync's backend runs on it.",
+      },
+      {
+        name: "Turborepo",
+        level: 2,
+        note: "Caching across a monorepo once it holds more than one deployable. CodeMap is split that way.",
+      },
+    ],
   },
 ];
 
