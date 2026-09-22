@@ -1,12 +1,124 @@
 "use client";
 
-import { motion, useInView } from "motion/react";
+import { motion, useInView, useReducedMotion } from "motion/react";
 import { useRef } from "react";
 
 import { PROFILE, SOCIALS } from "@/lib/content";
 
 import { MagneticName } from "./magnetic-name";
 import { DrawLine, EASE, Magnetic, Reveal } from "./scroll-primitives";
+
+/**
+ * The dial standing beside the invitation. It is a beacon, not wallpaper:
+ * a sweep going round, pings leaving it, a dot on orbit and the standing
+ * offer set around the rim. Every part is hairline and monochrome, so it
+ * holds the empty half of the section without pulling against the
+ * headline lying over it.
+ *
+ * Entrance and rotation are split across nested elements on purpose — one
+ * element cannot both settle once and turn forever on the same transform.
+ */
+function SignalField({ play }: { play: boolean }) {
+  const reduceMotion = useReducedMotion();
+  const turn = (duration: number, direction = 1) =>
+    reduceMotion
+      ? {}
+      : {
+          animate: { rotate: 360 * direction },
+          transition: {
+            duration,
+            ease: "linear" as const,
+            repeat: Infinity,
+          },
+        };
+
+  return (
+    <motion.div
+      initial={reduceMotion ? false : { opacity: 0, scale: 0.88 }}
+      animate={play ? { opacity: 1, scale: 1 } : undefined}
+      transition={{ duration: 1.6, ease: EASE }}
+      className="relative size-[24rem] lg:size-[30rem]"
+    >
+      {/* The beam. Masked hollow so it reads as a sweep over the dial
+          rather than a slice of pie. */}
+      <motion.div
+        {...turn(14)}
+        className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(250,250,250,0.16)_46deg,transparent_92deg)]"
+        style={{
+          maskImage:
+            "radial-gradient(closest-side, transparent 26%, #000 62%, #000 99%, transparent 100%)",
+          WebkitMaskImage:
+            "radial-gradient(closest-side, transparent 26%, #000 62%, #000 99%, transparent 100%)",
+        }}
+      />
+
+      {/* Pings, leaving on a stagger. The keyframe is already switched off
+          under reduced motion in globals.css. */}
+      {[0, 1].map((i) => (
+        <span
+          key={i}
+          className="border-ash/40 animate-pulse-ring absolute inset-[34%] rounded-full border"
+          style={{ animationDelay: `${i * 1.3}s` }}
+        />
+      ))}
+
+      <span className="border-ash/30 absolute inset-0 rounded-full border" />
+      <span className="border-ash/15 absolute inset-[26%] rounded-full border" />
+      <span className="border-ash/25 absolute inset-[42%] rounded-full border" />
+
+      {/* Ticks on the rim, every sixth one long enough to read as a bearing.
+          Each one turns inside a box the size of the dial, so the pivot is
+          the dial's centre at any breakpoint — a radius in rem would have
+          to be restated every time the dial changes size. */}
+      {Array.from({ length: 24 }).map((_, i) => (
+        <div
+          key={i}
+          className="absolute inset-0"
+          style={{ transform: `rotate(${i * 15}deg)` }}
+        >
+          <span
+            className={`absolute top-0 left-1/2 w-px -translate-x-1/2 ${
+              i % 6 === 0 ? "bg-ash/70 h-4" : "bg-ash/30 h-2"
+            }`}
+          />
+        </div>
+      ))}
+
+      {/* The dot on orbit, with the light it carries. */}
+      <motion.div {...turn(11)} className="absolute inset-0">
+        <span className="bg-chalk/25 absolute top-0 left-1/2 size-6 -translate-x-1/2 -translate-y-1/2 rounded-full blur-md" />
+        <span className="bg-chalk absolute top-0 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+      </motion.div>
+
+      {/* The standing offer, set round the rim and turning against the beam. */}
+      <motion.div {...turn(48, -1)} className="absolute inset-0">
+        <svg viewBox="0 0 100 100" className="size-full">
+          <defs>
+            <path
+              id="contact-rim"
+              fill="none"
+              d="M50,50 m-41,0 a41,41 0 1,1 82,0 a41,41 0 1,1 -82,0"
+            />
+          </defs>
+          <text
+            className="fill-ash/70 font-mono"
+            fontSize="4.1"
+            letterSpacing="2.05"
+          >
+            <textPath href="#contact-rim">
+              OPEN TO WORK · AVAILABLE FOR COLLABORATION · LET&apos;S BUILD ·
+            </textPath>
+          </text>
+        </svg>
+      </motion.div>
+
+      {/* Centre mark. */}
+      <span className="bg-ash/40 absolute top-1/2 left-1/2 h-px w-5 -translate-x-1/2 -translate-y-1/2" />
+      <span className="bg-ash/40 absolute top-1/2 left-1/2 h-5 w-px -translate-x-1/2 -translate-y-1/2" />
+      <span className="bg-chalk absolute top-1/2 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+    </motion.div>
+  );
+}
 
 export function Contact() {
   const anchor = useRef<HTMLDivElement>(null);
@@ -25,8 +137,41 @@ export function Contact() {
         </Reveal>
 
         {/* ---------- the invitation ---------- */}
-        <div ref={anchor} className="mt-14 md:mt-20">
-          <h2 className="text-chalk flex justify-center text-center text-[clamp(2.4rem,13vw,12rem)] leading-[0.9] uppercase">
+        {/* Backdrop first, headline second — plain DOM order carries the
+            stacking here (no z-index tug of war), so the field always
+            paints under the type regardless of what else on the page is
+            positioned. A negative z-index here previously let the layer
+            escape behind the section's own background and vanish. */}
+        <div ref={anchor} className="relative mt-14 md:mt-20">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -top-48 right-0 -bottom-48 left-0"
+          >
+            <span
+              className="grid-veil absolute inset-0 opacity-80"
+              style={{
+                maskImage:
+                  "radial-gradient(38% 62% at 20% 50%, #000 18%, transparent 76%)",
+                WebkitMaskImage:
+                  "radial-gradient(38% 62% at 20% 50%, #000 18%, transparent 76%)",
+              }}
+            />
+
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 1.4, ease: EASE }}
+              className="animate-drift absolute top-1/2 left-[20%] h-[40rem] w-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.15),transparent_65%)] blur-3xl"
+            />
+
+            {/* Held back on phones — at that width the dial lands on top of
+                the headline instead of beside it. */}
+            <div className="absolute top-1/2 left-[20%] hidden -translate-x-1/2 -translate-y-1/2 md:block">
+              <SignalField play={inView} />
+            </div>
+          </div>
+
+          <h2 className="text-chalk relative flex justify-center text-center text-[clamp(2.4rem,13vw,12rem)] leading-[0.9] uppercase">
             <MagneticName
               text="Let's talk"
               play={inView}

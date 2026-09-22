@@ -5,8 +5,67 @@ import { useEffect, useState } from "react";
 
 import { IntroContext } from "./intro-context";
 
-const COUNT_MS = 1500;
-const HOLD_MS = 260;
+const COUNT_MS = 1100;
+const HOLD_MS = 180;
+const GREETING_MS = 90;
+
+/** "Hello" — one per language, cycled while the counter runs. */
+const HELLOS = [
+  "Hello", "Hola", "Bonjour", "Ciao", "Hallo", "Olá", "Привет", "你好",
+  "こんにちは", "안녕하세요", "مرحبا", "नमस्ते", "নমস্কার", "ਸਤ ਸ੍ਰੀ ਅਕਾਲ",
+  "வணக்கம்", "నమస్కారం", "ನಮಸ್ಕಾರ", "നമസ്കാരം", "નમસ્તે", "ଓଡ଼ିଆ ନମସ୍କାର",
+  "Xin chào", "สวัสดี", "Halo", "Kumusta", "Habari", "Sawubona",
+  "Molo", "Selam", "Sannu", "Bawo", "Ndewo", "Iska warran",
+  "Merhaba", "سلام", "שלום", "Γειά σου", "Cześć", "Ahoj",
+  "Szia", "Salut", "Здравей", "Привіт", "Bok", "Zdravo",
+  "Përshëndetje", "Labas", "Sveiki", "Tere",
+  "Hei", "Hej", "Halló", "Dia dhuit", "Shwmae", "Halò",
+  "Kaixo", "Ola", "Bongu", "გამარჯობა", "Բարեւ",
+  "Sälem", "Salom", "Сайн байна уу", "ආයුබෝවන්", "សួស្តី",
+  "ສະບາຍດີ", "မင်္ဂလာပါ", "བཀྲ་ཤིས་བདེ་ལེགས།", "سلام علیکم",
+  "Bonjou", "Talofa", "Kia ora", "Aloha", "Bula", "Malo e lelei",
+  "Saluton", "Salve", "Moni", "Mhoro", "Dumela",
+  "Jambo", "Akwaaba", "Barka", "Yassou", "Konnichiwa",
+];
+
+/**
+ * Cycles the world's "hello"s in the center for as long as the curtain is up.
+ *
+ * No AnimatePresence/exit here on purpose — with a change this rapid, an
+ * unmount-then-remount pair queues up faster than it can play out, which is
+ * what read as flicker. A single element that never drops below half opacity
+ * and re-triggers its own fade on every key change stays continuous instead.
+ */
+function Greeting({ running }: { running: boolean }) {
+  const reduceMotion = useReducedMotion();
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (!running || reduceMotion) return;
+    const id = window.setInterval(
+      () => setIndex((i) => (i + 1) % HELLOS.length),
+      GREETING_MS,
+    );
+    return () => window.clearInterval(id);
+  }, [running, reduceMotion]);
+
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 flex items-center justify-center px-6"
+    >
+      <motion.span
+        key={reduceMotion ? "static" : index}
+        initial={reduceMotion ? false : { opacity: 0.5 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: GREETING_MS / 1000, ease: "linear" }}
+        className="font-sans text-chalk text-center text-[clamp(1.6rem,5vw,3rem)] leading-none font-bold"
+      >
+        {HELLOS[index]}
+      </motion.span>
+    </div>
+  );
+}
 
 export function Preloader({ children }: { children: React.ReactNode }) {
   const reduceMotion = useReducedMotion();
@@ -68,6 +127,8 @@ export function Preloader({ children }: { children: React.ReactNode }) {
             >
               Mithilesh&nbsp;KS
             </motion.span>
+
+            <Greeting running={!ready} />
 
             <div className="flex items-end justify-between gap-6">
               <motion.p
