@@ -10,9 +10,15 @@ import { useIntroReady } from "./intro-context";
  * the animation stays centred on him at every width rather than being pinned
  * to coordinates that only hold on one screen — and the two cannot drift
  * apart the way two copies of it would.
+ *
+ * Below lg he is given a band of his own along the foot of the stage rather
+ * than standing behind the type: the column above reserves exactly this height
+ * as bottom padding, so the two never meet on a phone the way they do in the
+ * desktop two-column split. Sized in svh for that reason — a percentage would
+ * resolve against a stage that grows with its own content.
  */
 export const FIGURE_BOX =
-  "relative h-[46%] w-[min(74vw,390px)] sm:h-[56%] lg:h-[90%] lg:w-[min(40vw,600px)]";
+  "relative h-[34svh] w-[min(80vw,340px)] sm:h-[40svh] sm:w-[min(62vw,400px)] lg:h-[90%] lg:w-[min(40vw,600px)]";
 
 /**
  * The background-removed subject, planted bottom-right on the page gutter.
@@ -35,9 +41,6 @@ export function Portrait() {
   return (
     <div
       aria-hidden
-      /* Behind the type on small screens, where he shares the frame with it;
-         in front of it from lg, where the type has its own column to the
-         left and the two never meet. */
       className="pointer-events-none absolute inset-0 z-10 flex items-end justify-center lg:z-30 lg:justify-end lg:pr-10"
     >
       {/* He settles out of a slight oversize as he lands. */}
@@ -67,10 +70,8 @@ export function Portrait() {
             alt="Mithilesh KS"
             fill
             priority
-            sizes="(max-width: 1024px) 74vw, 40vw"
-            /* Pushed well back on small screens, where he sits behind the
-               type instead of beside it. */
-            className="object-contain object-bottom [filter:grayscale(1)_contrast(1.05)_brightness(0.46)] lg:[filter:grayscale(1)_contrast(1.1)_brightness(0.97)]"
+            sizes="(max-width: 1024px) 80vw, 40vw"
+            className="object-contain object-bottom [filter:grayscale(1)_contrast(1.08)_brightness(0.86)] lg:[filter:grayscale(1)_contrast(1.1)_brightness(0.97)]"
             style={{
               maskImage:
                 "linear-gradient(to bottom, #000 62%, rgba(0,0,0,0.4) 88%, transparent 100%)",

@@ -22,7 +22,7 @@ export function Crosshairs() {
         <motion.span
           key={spot}
           aria-hidden
-          className={`text-line absolute z-30 text-xs select-none ${spot}`}
+          className={`text-line absolute z-30 hidden text-xs select-none md:block ${spot}`}
           initial={{ opacity: 0, scale: 0.5 }}
           animate={ready ? { opacity: 1, scale: 1 } : undefined}
           transition={{ duration: 0.7, ease: EASE, delay: 1.5 + i * 0.07 }}
@@ -78,22 +78,30 @@ export function Stat({
 }: {
   value: string;
   label: string;
-  align?: "left" | "right";
+  /** "center" centres below lg only — the desktop row stays flush left. */
+  align?: "left" | "right" | "center";
   delay?: number;
 }) {
   const ready = useIntroReady();
+  const alignment = {
+    left: "text-left",
+    right: "text-right",
+    center: "text-center lg:text-left",
+  }[align];
 
   return (
     <motion.div
-      className={align === "right" ? "text-right" : "text-left"}
+      className={alignment}
       initial={{ opacity: 0, y: 16 }}
       animate={ready ? { opacity: 1, y: 0 } : undefined}
       transition={{ duration: 0.9, ease: EASE, delay }}
     >
-      <p className="text-chalk font-mono text-xl leading-none tracking-[-0.02em] tabular-nums md:text-2xl">
+      <p className="text-chalk font-mono text-lg leading-none tracking-[-0.02em] tabular-nums sm:text-xl md:text-2xl">
         {value}
       </p>
-      <p className="label mt-2 leading-snug">{label}</p>
+      <p className="label mt-2 text-[10px] leading-snug tracking-[0.14em] sm:text-[0.6875rem] sm:tracking-[0.22em]">
+        {label}
+      </p>
     </motion.div>
   );
 }

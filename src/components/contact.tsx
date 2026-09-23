@@ -186,7 +186,7 @@ export function Contact() {
           <Magnetic strength={0.28}>
             <a
               href={`mailto:${PROFILE.email}`}
-              className="group text-void relative inline-flex items-center gap-4 overflow-hidden rounded-full px-9 py-5 font-mono text-[11px] tracking-[0.22em] uppercase md:text-xs"
+              className="group text-void relative inline-flex max-w-full items-center gap-3 overflow-hidden rounded-full px-6 py-4 font-mono text-[10px] tracking-[0.1em] break-all uppercase sm:gap-4 sm:px-9 sm:py-5 sm:text-[11px] sm:tracking-[0.22em] md:text-xs"
             >
               <span className="bg-chalk absolute inset-0 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-[1.5]" />
               <span className="relative">{PROFILE.email}</span>
@@ -233,11 +233,13 @@ export function Contact() {
         </Reveal>
 
         {/* ---------- links ---------- */}
+        {/* One per row on phones; the columned rank only from md, which is
+            also where the dividers below switch from top rules to left ones. */}
         <div
-          className="mt-16 grid gap-px md:mt-24"
-          style={{
-            gridTemplateColumns: `repeat(${SOCIALS.length}, minmax(0, 1fr))`,
-          }}
+          className="mt-16 grid grid-cols-1 gap-px md:mt-24 md:[grid-template-columns:repeat(var(--social-columns),minmax(0,1fr))]"
+          style={
+            { "--social-columns": SOCIALS.length } as React.CSSProperties
+          }
         >
           {SOCIALS.map((social, i) => (
             <motion.a

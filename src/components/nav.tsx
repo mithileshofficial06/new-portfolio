@@ -30,7 +30,11 @@ function LocalClock() {
     return () => window.clearInterval(id);
   }, []);
 
-  return <span className="label tabular-nums">Chennai {time ?? "--:--:--"}</span>;
+  return (
+    <span className="label hidden tabular-nums lg:inline-block">
+      Chennai {time ?? "--:--:--"}
+    </span>
+  );
 }
 
 /** Tracks which section owns the viewport so the nav can mark it. */
@@ -95,7 +99,7 @@ export function Nav() {
           <CylinderWordmark text={PROFILE.name} collapseAfter={0} />
         </a>
 
-        <nav className="hidden items-center gap-9 md:flex">
+        <nav className="hidden items-center gap-9 lg:flex">
           {NAV_LINKS.map((link) => {
             const isActive = active === link.href.slice(1);
             return (
@@ -124,7 +128,7 @@ export function Nav() {
           <LocalClock />
           <a
             href={`mailto:${PROFILE.email}`}
-            className="border-line text-chalk hover:bg-chalk hover:text-void hidden rounded-full border px-4 py-1.5 font-mono text-[11px] tracking-[0.18em] uppercase transition-colors duration-400 sm:inline-block"
+            className="border-line text-chalk hover:bg-chalk hover:text-void hidden rounded-full border px-4 py-1.5 font-mono text-[11px] tracking-[0.18em] uppercase transition-colors duration-400 lg:inline-block"
           >
             Let&rsquo;s talk
           </a>

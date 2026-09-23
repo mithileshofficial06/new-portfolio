@@ -50,9 +50,13 @@ function Greeting({ running }: { running: boolean }) {
   }, [running, reduceMotion]);
 
   return (
+    /* Below lg the greeting is held to the empty band above the counter.
+       Centred on the whole curtain it landed on top of the count, which at
+       22vw is wide enough on a phone to reach the middle of the screen —
+       on a desktop the count sits far enough right that the two clear. */
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 flex items-center justify-center px-6"
+      className="pointer-events-none absolute inset-x-0 top-0 bottom-[18%] flex items-center justify-center px-6 lg:bottom-0"
     >
       <motion.span
         key={reduceMotion ? "static" : index}
@@ -130,7 +134,10 @@ export function Preloader({ children }: { children: React.ReactNode }) {
 
             <Greeting running={!ready} />
 
-            <div className="flex items-end justify-between gap-6">
+            {/* `mt-auto` below lg swallows the free space above, so the count
+                settles onto the rule it is reading out rather than floating in
+                the middle of a tall phone with the rule stranded beneath it. */}
+            <div className="mt-auto flex items-end justify-between gap-6 lg:mt-0">
               <motion.p
                 className="text-smoke max-w-[22ch] font-mono text-[11px] leading-[1.9] tracking-[0.14em] uppercase"
                 initial={{ opacity: 0, y: 12 }}

@@ -119,8 +119,11 @@ export function Hero() {
         <Portrait />
 
         {/* ---------- layer 20: the type ---------- */}
+        {/* Below lg the foot of the column is held open by the height of the
+            figure's band, so the type stops where he starts instead of being
+            laid over him. */}
         <div
-          className={`relative z-20 flex flex-1 flex-col pt-24 pb-9 md:pt-28 ${FRAME}`}
+          className={`relative z-20 flex flex-1 flex-col pt-20 pb-[36svh] sm:pb-[42svh] md:pt-28 lg:pb-9 ${FRAME}`}
         >
           {/* Held out of the right third on wide screens, so the column sits
               in the space he is looking into rather than behind him. */}
@@ -155,7 +158,7 @@ export function Hero() {
                 a sibling, not a background on the type — the letters carry
                 per-character transforms of their own and a clip on the h1
                 would slice a magnified glyph. */}
-            <div className="relative mt-8 flex w-full justify-center md:mt-10">
+            <div className="relative mt-6 flex w-full justify-center md:mt-10">
               <h1 className="text-chalk flex text-center text-[clamp(2rem,7.2vw,7.25rem)] leading-[0.92] uppercase">
                 <MagneticName
                   text="Mithilesh KS"
@@ -187,7 +190,7 @@ export function Hero() {
 
             {/* Role and place, back on one centred line under the name — with
                 the figure in his own column there is nothing here to hit. */}
-            <div className="mt-6 flex items-center gap-5 md:mt-7">
+            <div className="mt-5 flex items-center gap-5 md:mt-7">
               <motion.span
                 aria-hidden
                 className="via-line hidden h-px w-14 bg-gradient-to-r from-transparent to-transparent sm:block"
@@ -233,10 +236,10 @@ export function Hero() {
             {/* Staggered one by one. As a single Rise the three of them
                 popped as one bar, which is the moment the eye reads as
                 "a row of buttons" rather than as an invitation. */}
-            <div className="mt-11 flex flex-wrap items-center justify-center gap-4 md:mt-14">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:mt-14">
               <motion.a
                 href="#work"
-                className="group text-void relative inline-flex items-center gap-3 overflow-hidden rounded-full px-7 py-3.5 font-mono text-[11px] tracking-[0.2em] uppercase"
+                className="group text-void relative inline-flex items-center gap-3 overflow-hidden rounded-full px-5 py-3.5 font-mono text-[10px] tracking-[0.16em] uppercase sm:px-7 sm:text-[11px] sm:tracking-[0.2em]"
                 initial={reduceMotion ? false : { opacity: 0, y: 22, scale: 0.94 }}
                 animate={ready ? { opacity: 1, y: 0, scale: 1 } : undefined}
                 transition={{ duration: 0.85, ease: EASE, delay: BEAT.actions }}
@@ -250,7 +253,7 @@ export function Hero() {
 
               <motion.a
                 href={`mailto:${PROFILE.email}`}
-                className="group border-line text-chalk hover:border-chalk inline-flex items-center gap-3 rounded-full border px-7 py-3.5 font-mono text-[11px] tracking-[0.2em] uppercase backdrop-blur-sm transition-colors duration-500"
+                className="group border-line text-chalk hover:border-chalk inline-flex items-center gap-3 rounded-full border px-5 py-3.5 font-mono text-[10px] tracking-[0.16em] uppercase backdrop-blur-sm transition-colors duration-500 sm:px-7 sm:text-[11px] sm:tracking-[0.2em]"
                 initial={reduceMotion ? false : { opacity: 0, y: 22, scale: 0.94 }}
                 animate={ready ? { opacity: 1, y: 0, scale: 1 } : undefined}
                 transition={{
@@ -270,7 +273,7 @@ export function Hero() {
                 href={PROFILE.resume}
                 target="_blank"
                 rel="noreferrer"
-                className="group border-line text-chalk hover:border-chalk inline-flex items-center gap-3 rounded-full border px-7 py-3.5 font-mono text-[11px] tracking-[0.2em] uppercase backdrop-blur-sm transition-colors duration-500"
+                className="group border-line text-chalk hover:border-chalk inline-flex items-center gap-3 rounded-full border px-5 py-3.5 font-mono text-[10px] tracking-[0.16em] uppercase backdrop-blur-sm transition-colors duration-500 sm:px-7 sm:text-[11px] sm:tracking-[0.2em]"
                 initial={reduceMotion ? false : { opacity: 0, y: 22, scale: 0.94 }}
                 animate={ready ? { opacity: 1, y: 0, scale: 1 } : undefined}
                 transition={{
@@ -290,16 +293,25 @@ export function Hero() {
                 left half was a hole with the actions floating at the top of
                 it — they carry their own weight here, whatever About does
                 with the same figures further down. */}
-            <div className="mt-14 flex flex-wrap justify-center gap-x-14 gap-y-8 md:mt-20">
+            {/* Three abreast in a grid on phones — left to wrap they broke
+                two-and-one, which reads as a dropped item rather than a row. */}
+            <div className="mt-9 grid w-full grid-cols-3 gap-x-4 sm:flex sm:w-auto sm:flex-wrap sm:justify-center sm:gap-x-14 sm:gap-y-8 md:mt-20">
               <Stat
                 value={String(PROJECTS.length).padStart(2, "0")}
                 label="Featured builds"
+                align="center"
                 delay={BEAT.stats}
               />
-              <Stat value="36" label="Public repos" delay={BEAT.stats + 0.07} />
+              <Stat
+                value="36"
+                label="Public repos"
+                align="center"
+                delay={BEAT.stats + 0.07}
+              />
               <Stat
                 value={"CSE ’28"}
                 label={"LICET · Chennai"}
+                align="center"
                 delay={BEAT.stats + 0.14}
               />
             </div>
@@ -309,11 +321,13 @@ export function Hero() {
           {/* Runs the full width: the case and the links stay left of him,
               the scroll cue closes the frame on his side, in front of the
               fade where his legs give out. */}
-          <div className="relative z-40 mt-auto flex w-full flex-wrap items-end justify-between gap-8 pt-12">
+          {/* A centred stack on phones, where `justify-between` left the
+              scroll cue orphaned on a row of its own. */}
+          <div className="relative z-40 mt-auto flex w-full flex-col items-center gap-7 pt-10 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:gap-8 sm:pt-12">
             <Rise
               play={ready}
               delay={BEAT.baseLine}
-              className="flex max-w-[17rem] flex-col gap-4"
+              className="flex max-w-[22rem] flex-col items-center gap-4 text-center sm:max-w-[17rem] sm:items-start sm:text-left"
             >
               <p className="label leading-relaxed">
                 Full stack development with a cybersecurity habit — Python,
@@ -337,7 +351,9 @@ export function Hero() {
               </div>
             </Rise>
 
-            <Rise play={ready} delay={BEAT.scrollCue}>
+            {/* A scroll affordance is a pointer-era convention; on touch it is
+                noise, and the same link sits in the actions above. */}
+            <Rise play={ready} delay={BEAT.scrollCue} className="hidden sm:block">
               <a
                 href="#work"
                 className="group flex items-center gap-3"

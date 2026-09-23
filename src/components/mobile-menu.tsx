@@ -40,7 +40,7 @@ export function MobileMenu() {
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-label={open ? "Close menu" : "Open menu"}
-        className="text-chalk relative flex h-8 w-8 flex-col items-center justify-center gap-[5px] md:hidden"
+        className="text-chalk relative flex h-8 w-8 flex-col items-center justify-center gap-[5px] lg:hidden"
       >
         <motion.span
           className="bg-chalk block h-px w-5"
@@ -62,7 +62,7 @@ export function MobileMenu() {
           <AnimatePresence>
             {open && (
               <motion.div
-                className="bg-void fixed inset-0 z-90 flex flex-col justify-between px-6 pt-28 pb-10 md:hidden"
+                className="bg-void fixed inset-0 z-90 flex flex-col justify-between overflow-y-auto px-6 pt-28 pb-10 lg:hidden"
                 initial={{ clipPath: "inset(0% 0% 100% 0%)" }}
                 animate={{ clipPath: "inset(0% 0% 0% 0%)" }}
                 exit={{ clipPath: "inset(0% 0% 100% 0%)" }}
